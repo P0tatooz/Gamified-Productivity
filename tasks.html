@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            overflow-y: auto;
+            padding-bottom: 100px; /* Add padding at bottom of body */
+        }
+
+        .container {
+            min-height: 100vh;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: visible; /* Changed from auto to visible */
+            margin-bottom: 100px; /* Add extra space at bottom */
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            margin-bottom: 20px;
+            background: #f8f8f8;
+        }
+
+        /* Update header title styles */
+        .header-title {
+            color: #7B90A8;
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: -0.5px;
+        }
+
+        /* Remove all these CSS classes:
+        .search-container
+        .search-input
+        .tags-dropdown
+        .tags-content
+        .tags-icon
+        .tags-header
+        .tag-item
+        .tag-checkbox
+        .tag-label
+        .tags-footer
+        .clear-filters
+        .cancel-tags
+        */
+
+        /* Add this new CSS for the dashboard link */
+        .dashboard-link {
+            text-decoration: none;
+            color: #7B90A8;
+            font-size: 18px;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .dashboard-link:hover {
+            background-color: rgba(123, 144, 168, 0.1);
+        }
+
+        .add-task-btn {
+            background-color: #7B90A8;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+            transition: background-color 0.15s ease;
+        }
+
+        .add-task-btn span {
+            margin-right: 5px;
+            font-size: 18px;
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            flex: 1;
+            min-height: 600px; /* Increased from 0 */
+            padding-bottom: 100px; /* Increased padding at bottom */
+            margin-right: -10px;
+            padding-right: 10px;
+            overflow-y: visible; /* Allow content to expand */
+        }
+
+        .section {
+            flex: 1;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            min-height: 500px; /* Increased minimum height */
+            height: auto;
+            margin-bottom: 40px; /* Increased margin between sections */
+            padding-top: 0; /* Add this to remove top spacing */
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px; /* Adjusted padding */
+            margin-bottom: 0; /* Remove bottom margin */
+        }
+
+        .section-title {
+            font-size: 20px; /* Slightly smaller */
+            font-weight: bold;
+            color: #333;
+            padding: 8px 0; /* Reduced padding */
+        }
+
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 0; /* Remove any bottom margin */
+        }
+
+        .tab {
+            padding: 8px 12px; /* Slightly reduced padding */
+            cursor: pointer;
+            color: #666;
+            position: relative;
+            font-size: 14px;
+        }
+
+        .tab.active {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        .tab.active::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #f44336;
+        }
+
+        .add-item {
+            padding: 12px; /* Reduced from 15px */
+            background-color: #f5f5f5;
+            text-align: center;
+            cursor: pointer;
+            color: #777;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s ease;
+            font-size: 14px; /* Added for better proportion */
+        }
+
+        .add-item:hover {
+            background-color: #ebebeb;
+        }
+
+        .task-item {
+            display: flex;
+            min-height: 52px;
+            margin: 0;
+            background: white;
+            border-bottom: 1px solid #e1e0e3;
+            position: relative;
+            overflow: visible;
+            transition: opacity 0.3s ease;
+        }
+
+        .task-item.completed .task-left-area {
+            background-color: #24CC8F;
+        }
+
+        /* Update task left area and plus button styling */
+        .task-left-area {
+            width: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .task-plus {
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            background: transparent;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .task-plus:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+
+        .task-content {
+            padding: 8px 12px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .task-title {
+            font-size: 14px;
+            color: #4f4a57;
+            margin-bottom: 2px;
+            line-height: 1.4;
+        }
+
+        .task-notes {
+            font-size: 12px;
+            color: #878190;
+            line-height: 1.4;
+        }
+
+        /* Options menu styling */
+        .task-options {
+            position: relative; /* Add this */
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #878190;
+            cursor: pointer;
+            padding: 8px 12px;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+
+        .task-options:hover {
+            opacity: 1;
+        }
+
+        .options-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            border-radius: 4px;
+            min-width: 160px;
+            z-index: 1000;
+            overflow: hidden;
+            margin-top: 4px; /* Add some spacing from the button */
+        }
+
+        .option-item {
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #4f4a57;
+            font-size: 14px;
+            transition: background-color 0.2s ease;
+        }
+
+        .option-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .option-item.delete {
+            color: #ff4444;
+        }
+
+        .option-item .option-icon {
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+        }
+
+        .option-item.delete .option-icon {
+            color: #ff4444;
+        }
+
+        /* Specific section colors */
+        .habits .task-checkbox {
+            background-color: #f9bb7d;
+        }
+
+        .dailies .task-checkbox {
+            background-color: #f9954a;
+        }
+
+        .todos .task-checkbox {
+            background-color: #f9954a;
+        }
+
+        .rewards .task-checkbox {
+            background-color: #f8ce70;
+        }
+
+        .reward-points {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #f8ce70;
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Input modal */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px); /* Add subtle blur to background */
+            display: none;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 24px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .close {
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-submit {
+            background-color: #7B90A8;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .task-type-menu {
+            position: absolute;
+            background: white;
+            box-shadow: 0 2px 8px rgba(26, 24, 29, 0.16);
+            border-radius: 4px;
+            min-width: 200px;
+            z-index: 1000;
+            padding: 8px 0;
+        }
+
+        .task-type-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            cursor: pointer;
+            color: #4e4a57;
+            font-size: 14px;
+            transition: background-color 0.15s ease;
+        }
+
+        .task-type-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .task-type-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Task type specific styles */
+        .task-type-habit .task-type-icon::before {
+            content: '±';
+            color: #7B90A8;
+            font-size: 20px;
+        }
+
+        .task-type-daily .task-type-icon::before {
+            content: '☐';
+            color: #7B90A8;
+            font-size: 20px;
+        }
+
+        .task-type-todo .task-type-icon::before {
+            content: '☐';
+            color: #7B90A8;
+            font-size: 20px;
+        }
+
+        .task-type-reward .task-type-icon::before {
+            content: '☆';
+            color: #7B90A8;
+            font-size: 20px;
+        }
+
+        /* Tags dropdown */
+        .tags-content {
+            display: none;
+            position: absolute;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            z-index: 1000;
+        }
+
+        .tags-content div {
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .tags-content div:hover {
+            background-color: #f5f5f5;
+        }
+
+        .tags-content input {
+            margin-right: 10px;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #666;
+            padding: 8px;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+            border-radius: 8px;
+            min-width: 150px;
+            display: none;
+            z-index: 1000;
+        }
+
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px; /* Slightly wider scrollbar */
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c4c4c4;
+            border-radius: 6px;
+            border: 2px solid #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Update/add these styles in your CSS section */
+        .task-options {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #878190;
+            cursor: pointer;
+            padding: 8px 12px;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+            position: relative;
+        }
+
+        .task-options:hover {
+            opacity: 1;
+        }
+
+        .options-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            border-radius: 4px;
+            min-width: 160px;
+            z-index: 1000;
+            overflow: hidden;
+            margin-top: 4px; /* Add some spacing from the button */
+        }
+
+        .option-item {
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #4f4a57;
+            font-size: 14px;
+            transition: background-color 0.2s ease;
+        }
+
+        .option-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .option-item.delete {
+            color: #ff4444;
+        }
+
+        .option-item .option-icon {
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+        }
+
+        .option-item.delete .option-icon {
+            color: #ff4444;
+        }
+
+        .tags-selection {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .tags-selection-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+            color: #4a5568;
+            transition: all 0.2s ease;
+        }
+
+        .tag-options {
+            padding: 8px 0;
+        }
+
+        .tag-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .tag-item:hover {
+            background-color: #f7fafc;
+        }
+
+        .selected-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .tag-badge {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: #EDF2F7;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #4A5568;
+        }
+
+        .remove-tag {
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s ease;
+        }
+
+        .remove-tag:hover {
+            opacity: 1;
+        }
+
+        .tags-modal {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 4px;
+            z-index: 1001;
+            display: none;
+        }
+
+        .tags-modal.show {
+            display: block;
+        }
+
+        /* Add these styles to your existing <style> section */
+
+        .time-inputs {
+            display: flex;
+            gap: 16px;
+        }
+
+        .time-input-group {
+            flex: 1;
+        }
+
+        .time-input-group label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 4px;
+            color: #666;
+        }
+
+        .task-time {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .task-due {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        .task-due.due {
+            background-color: #FFE5E5;
+            color: #FF4444;
+        }
+
+        .task-due.not-due {
+            background-color: #E5FFE5;
+            color: #44FF44;
+        }
+
+        /* Player frame and avatar styles */
+        .player-frame {
+          position: relative;
+          width: 120px;
+          height: 120px;
+          margin-left: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .frame-img {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          image-rendering: pixelated;
+          z-index: 2;
+        }
+        .player-avatar {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 70%;
+          height: 70%;
+          transform: translate(-50%, -50%);
+          object-fit: contain;
+          image-rendering: pixelated;
+          z-index: 3;
+          background: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="header-title">Conquer your day</h1>
+            <button class="add-task-btn"><span>+</span> Add Task</button>
+        </div>
+
+        <div class="main-content">
+            <!-- HABITS SECTION -->
+            <div class="section habits">
+                <div class="section-header">
+                    <h2 class="section-title">Habits</h2>
+                </div>
+                <div class="tabs">
+                    <div class="tab active">All</div>
+                    <div class="tab">Weak</div>
+                    <div class="tab">Strong</div>
+                </div>
+                <div class="add-item" id="add-habit">Add a Habit</div>
+                <div class="task-list" id="habits-list">
+                    <!-- Empty - will be filled by user input -->
+                </div>
+            </div>
+
+            <!-- DAILIES SECTION -->
+            <div class="section dailies">
+                <div class="section-header">
+                    <h2 class="section-title">Dailies</h2>
+                </div>
+                <div class="tabs">
+                    <div class="tab active">All</div>
+                    <div class="tab">Due</div>
+                    <div class="tab">Not Due</div>
+                </div>
+                <div class="add-item" id="add-daily">Add a Daily</div>
+                <div class="task-list" id="dailies-list">
+                    <!-- Empty - will be filled by user input -->
+                </div>
+            </div>
+
+            <!-- TO DO'S SECTION -->
+            <div class="section todos">
+                <div class="section-header">
+                    <h2 class="section-title">To Do's</h2>
+                </div>
+                <div class="tabs">
+                    <div class="tab active">Active</div>
+                    <div class="tab">Scheduled</div>
+                    <div class="tab">Complete</div>
+                </div>
+                <div class="add-item" id="add-todo">Add a To Do</div>
+                <div class="task-list" id="todos-list">
+                    <!-- Empty - will be filled by user input -->
+                </div>
+            </div>
+
+            <!-- REWARDS SECTION -->
+            <div class="section rewards">
+                <div class="section-header">
+                    <h2 class="section-title">Rewards</h2>
+                </div>
+                <div class="tabs">
+                    <div class="tab active">All</div>
+                    <div class="tab">Custom</div>
+                    <div class="tab">Wishlist</div>
+                </div>
+                <div class="add-item" id="add-reward">Add a Reward</div>
+                <div class="task-list" id="rewards-list">
+                    <!-- Empty - will be filled by user input -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Task Modal -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add New Task</h3>
+                <span class="close">&times;</span>
+            </div>
+            <form id="taskForm">
+                <input type="hidden" id="taskType" value="">
+                <div class="form-group">
+                    <label class="form-label" for="taskName">Task Name</label>
+                    <input type="text" class="form-input" id="taskName" required placeholder="e.g. Take a short break">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="taskDescription">Description (optional)</label>
+                    <input type="text" class="form-input" id="taskDescription" placeholder="e.g. Tap to specify...">
+                </div>
+                <div class="form-group" id="pointsGroup" style="display: none;">
+                    <label class="form-label" for="taskPoints">Points</label>
+                    <input type="number" class="form-input" id="taskPoints" value="10">
+                </div>
+                <!-- Add this new div for time range -->
+                <div class="form-group" id="timeGroup" style="display: none;">
+                    <label class="form-label">Time Range</label>
+                    <div class="time-inputs">
+                        <div class="time-input-group">
+                            <label>Start</label>
+                            <input type="time" id="startTime" class="form-input">
+                        </div>
+                        <div class="time-input-group">
+                            <label>End</label>
+                            <input type="time" id="endTime" class="form-input">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="form-submit">Save</button>
+            </form>
+        </div>
+    </div>
+
+<script>
+    /*
+     * ===================== Local Storage Management =====================
+     * This section handles all interactions with localStorage for task data.
+     * The functions here ensure that all task data is loaded, saved, and initialized properly.
+     * Using localStorage allows the app to persist user data across sessions without a backend.
+     */
+
+    /**
+     * Retrieves the stored task data from localStorage, or initializes it if not present
+     * This function is crucial for maintaining data persistence across page reloads
+     * It handles error cases gracefully by returning a default empty structure if data is corrupted
+     * The returned data structure contains arrays for habits, dailies, todos, and rewards
+     */
+    function getStoredData() {
+        // Try block is used to attempt to retrieve and parse the data from localStorage.
+        // This ensures that any errors in accessing or parsing the data are caught.
+        // It helps prevent the app from crashing due to malformed or missing data.
+        try {
+            // Retrieve the JSON string from localStorage using the key 'taskManagementData'.
+            // This key is used to uniquely identify the task data in the browser's storage.
+            // The value is expected to be a JSON string representing the user's tasks.
+            const storedData = localStorage.getItem('taskManagementData');
+            // Log the retrieved data for debugging purposes.
+            // This helps developers see what data is being loaded at runtime.
+            // Useful for troubleshooting issues with data persistence.
+            console.log('Retrieved stored data:', storedData);
+            // If data exists, parse it from JSON and return it.
+            // If no data exists, return a default object with empty arrays for each task type.
+            // This ensures the app always has a valid data structure to work with.
+            return storedData ? JSON.parse(storedData) : {
+                habits: [],
+                dailies: [],
+                todos: [],
+                rewards: []
+            };
+        } catch (error) {
+            // If an error occurs, log it to the console for debugging.
+            // This helps identify issues with data retrieval or parsing.
+            // The app can then recover gracefully instead of crashing.
+            console.error('Error getting stored data:', error);
+            // Return a default object with empty arrays for each task type.
+            // This ensures the app can continue functioning even if data is corrupted.
+            // The user will see an empty task list instead of an error.
+            return {
+                habits: [],
+                dailies: [],
+                todos: [],
+                rewards: []
+            };
+        }
+    }
+
+    /**
+     * Saves the given data object to localStorage as a JSON string
+     * This function is responsible for persisting all task data to the browser's storage
+     * It handles the conversion of the data object to a JSON string
+     * Returns true on success and false on failure for error handling
+     */
+    function saveData(data) {
+        // Try block is used to attempt to convert and save the data to localStorage.
+        // This ensures that any errors in stringifying or saving the data are caught.
+        // It helps prevent the app from crashing due to storage issues.
+        try {
+            // Convert the data object to a JSON string for storage.
+            // This is necessary because localStorage only supports string values.
+            // The JSON string can later be parsed back into an object.
+            const jsonData = JSON.stringify(data);
+            // Log the data being saved for debugging purposes.
+            // This helps developers see what data is being written at runtime.
+            // Useful for troubleshooting issues with data persistence.
+            console.log('Saving data:', jsonData);
+            // Store the JSON string in localStorage using the key 'taskManagementData'.
+            // This key is used to uniquely identify the task data in the browser's storage.
+            // The value is the stringified version of the user's tasks.
+            localStorage.setItem('taskManagementData', jsonData);
+            // Return true to indicate that the data was saved successfully.
+            // This allows calling code to check for success and handle errors if needed.
+            // Useful for providing feedback to the user or triggering additional actions.
+            return true;
+        } catch (error) {
+            // If an error occurs, log it to the console for debugging.
+            // This helps identify issues with data conversion or storage.
+            // The app can then recover gracefully instead of crashing.
+            console.error('Error in saveData:', error);
+            // Return false to indicate that the data was not saved successfully.
+            // This allows calling code to check for failure and handle errors if needed.
+            // Useful for providing feedback to the user or triggering error handling.
+            return false;
+        }
+    }
+
+    // ===================== App Data Initialization =====================
+    // Loads the app data from localStorage at startup
+    // This object holds all tasks for the session and is the single source of truth
+    // Any changes to tasks must update this object before saving to localStorage
+    let appData = getStoredData(); // This object holds all tasks for the session
+    console.log('Initial appData:', appData); // Debug log for initial state
+
+    // ===================== DOM Elements =====================
+    // Get references to important DOM elements for later use
+    // These elements are used throughout the application for user interaction
+    // Caching these references improves performance by avoiding repeated DOM queries
+    const modal = document.getElementById("taskModal"); // The modal dialog for adding/editing tasks
+    const closeBtn = document.querySelector(".close"); // The close button for the modal
+    const taskForm = document.getElementById("taskForm"); // The form inside the modal
+    const taskTypeInput = document.getElementById("taskType"); // Hidden input to store the current task type
+    const modalTitle = document.getElementById("modalTitle"); // The title of the modal
+    const pointsGroup = document.getElementById("pointsGroup"); // The points input group (for rewards)
+    const timeGroup = document.getElementById("timeGroup"); // The time input group (for dailies)
+
+    /**
+     * Event Listeners for opening modal
+     * These listeners handle the user interaction to add new tasks
+     * Each listener is specific to a different type of task (habit, daily, todo, reward)
+     * The openModal function is called with the appropriate task type
+     */
+    document.getElementById("add-habit").addEventListener("click", () => openModal("habit"));
+    document.getElementById("add-daily").addEventListener("click", () => openModal("daily"));
+    document.getElementById("add-todo").addEventListener("click", () => openModal("todo"));
+    document.getElementById("add-reward").addEventListener("click", () => openModal("reward"));
+
+    /**
+     * Close modal event listeners
+     * These listeners handle closing the modal in different ways:
+     * 1. Clicking the close button
+     * 2. Clicking outside the modal
+     * Both methods call the closeModal function to clean up the modal state
+     */
+    closeBtn.addEventListener("click", closeModal);
+    window.addEventListener("click", (e) => {
+        if (e.target === modal) closeModal();
+    });
+
+    /**
+     * Form submission handler
+     * This function processes the task creation form submission
+     * It validates the input, creates the appropriate task type
+     * Handles special cases for different task types (daily, reward, todo)
+     * Updates the UI and storage after successful task creation
+     */
+    taskForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const type = taskTypeInput.value;
+        const title = document.getElementById("taskName").value.trim();
+        const description = document.getElementById("taskDescription").value.trim();
+        if (!title) {
+            alert("Please enter a task name");
+            return;
+        }
+        if (type === "daily") {
+            const startTime = document.getElementById("startTime").value;
+            const endTime = document.getElementById("endTime").value;
+            if (!startTime || !endTime) {
+                alert("Please set both start and end time for daily tasks");
+                return;
+            }
+            // Friend's exact logic for dailies
+            const dailyTask = {
+                id: Date.now().toString(),
+                title: title,
+                description: description,
+                startTime: startTime,
+                endTime: endTime,
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+            if (!appData.dailies) appData.dailies = [];
+            appData.dailies.push(dailyTask);
+            localStorage.setItem('taskManagementData', JSON.stringify(appData));
+            // Render the new daily directly in the UI.
+            // This provides immediate feedback to the user that the task was added.
+            // The task is added to the dailies list in the DOM.
+            const taskList = document.getElementById('dailies-list');
+            if (taskList) {
+                // Create a new div element to represent the daily task.
+                // This element will contain all the task details and controls.
+                // It is styled according to the task's properties.
+                const taskElement = document.createElement('div');
+                // Set the class name of the task element to 'task-item'.
+                // This applies the default styling for all tasks.
+                // The class is used for consistent appearance across different task types.
+                taskElement.className = 'task-item';
+                // Set the data-id attribute of the task element to the daily task's id.
+                // This allows the element to be easily identified and manipulated later.
+                // The id is used for tasks like updating or deleting the task.
+                taskElement.dataset.id = dailyTask.id;
+                // Set the inner HTML of the task element to the task's content.
+                // This includes the task's title, description, and time range.
+                // The HTML is dynamically generated based on the task's properties.
+                taskElement.innerHTML = `
+                    <div class="task-left-area" style="background-color: #F9954A;">
+                        <button class="task-plus">+</button>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-title">${dailyTask.title}</div>
+                        ${dailyTask.description ? `<div class="task-notes">${dailyTask.description}</div>` : ''}
+                        <div class="task-time">${formatTime(dailyTask.startTime)} - ${formatTime(dailyTask.endTime)}</div>
+                    </div>
+                `;
+                // Add click handler for the plus button
+                // This allows the user to mark the task as completed or incomplete.
+                // The button's appearance and behavior change based on the task's completion status.
+                const plusButton = taskElement.querySelector('.task-plus');
+                const leftArea = taskElement.querySelector('.task-left-area');
+                plusButton.addEventListener('click', () => {
+                    // Toggle the completed status of the daily task.
+                    // This flips the current state of the task's completion.
+                    // The UI and data are updated accordingly.
+                    const completed = !dailyTask.completed;
+                    dailyTask.completed = completed;
+                    // Update UI
+                    // Toggle the 'completed' class on the task element.
+                    // This changes the visual appearance of the task to indicate completion.
+                    // The class is used for styling completed tasks differently.
+                    taskElement.classList.toggle('completed', completed);
+                    // Change the background color of the left area based on completion status.
+                    // Green indicates completion, orange indicates incomplete.
+                    // This provides a clear visual cue to the user.
+                    leftArea.style.backgroundColor = completed ? '#24CC8F' : '#F9954A';
+                    // Change the text of the plus button based on completion status.
+                    // A checkmark indicates completion, a plus indicates incomplete.
+                    // This helps the user understand the current state of the task.
+                    plusButton.textContent = completed ? '✓' : '+';
+                    // Update data
+                    // Find the index of the daily task in the appData.dailies array.
+                    // This is necessary to update the correct task in the data structure.
+                    // The index is used to replace the old task with the updated one.
+                    const taskIndex = appData.dailies.findIndex(t => t.id === dailyTask.id);
+                    if (taskIndex !== -1) {
+                        // Update the daily task in the appData.dailies array.
+                        // This ensures the data structure reflects the current state of the task.
+                        // The updated task is saved to localStorage in the next step.
+                        appData.dailies[taskIndex] = dailyTask;
+                        // Save the updated appData object to localStorage.
+                        // This persists the changes so they remain after page reloads.
+                        // The data is stringified before being saved.
+                        localStorage.setItem('taskManagementData', JSON.stringify(appData));
+                    }
+                    // Send message to parent window when completed
+                    // This notifies the parent window that the task has been completed.
+                    // The message includes the task type and completion status.
+                    // This allows the parent window to update its state accordingly.
+                    if (completed) {
+                        window.parent.postMessage({
+                            type: 'taskCompleted',
+                            taskType: 'daily'
+                        }, '*');
+                    }
+                });
+                // Append the task element to the dailies list in the DOM.
+                // This adds the new task to the UI so the user can see it.
+                // The task is now part of the visible list of daily tasks.
+                taskList.appendChild(taskElement);
+            }
+            // Reset the task form to clear all input fields.
+            // This prepares the form for the next task creation.
+            // The user can start fresh without old data interfering.
+            taskForm.reset();
+            // Close the modal to hide it from view.
+            // This returns the user to the main task list view.
+            // The modal is hidden until the user chooses to add another task.
+            closeModal();
+            // Return from the function to stop further execution.
+            // This prevents any additional code from running after the daily task is handled.
+            // The function is complete for this task type.
+            return;
+        }
+        // All other types
+        // Check if the task type is "reward".
+        // If so, handle the special logic for reward tasks, including points.
+        // This block ensures reward tasks have the correct point value.
+        if (type === "reward") {
+            // Get the value of the points input for the reward task.
+            // This specifies how many points the reward is worth.
+            // The value is expected to be a number, defaulting to 10 if not provided.
+            const points = parseInt(document.getElementById("taskPoints").value) || 10;
+            // Call the addTask function with the reward type and task data.
+            // This creates a new reward task and updates the UI and storage.
+            // The task data includes the title, description, and points.
+            addTask(type, { title, description, points });
+        } else if (type === "todo") {
+            // Get the value of the due date input for the todo task.
+            // This specifies when the todo task is due.
+            // The value is expected to be a date string.
+            const dueDate = document.getElementById("dueDate")?.value;
+            // Call the addTask function with the todo type and task data.
+            // This creates a new todo task and updates the UI and storage.
+            // The task data includes the title, description, and due date.
+            addTask(type, { title, description, dueDate });
+        } else {
+            // If the task type is not reward or todo, it must be a habit.
+            // Call the addTask function with the habit type and task data.
+            // This creates a new habit task and updates the UI and storage.
+            // The task data includes the title and description.
+            addTask(type, { title, description });
+        }
+        // Reset the task form to clear all input fields.
+        // This prepares the form for the next task creation.
+        // The user can start fresh without old data interfering.
+        taskForm.reset();
+        // Close the modal to hide it from view.
+        // This returns the user to the main task list view.
+        // The modal is hidden until the user chooses to add another task.
+        closeModal();
+    });
+
+    /**
+     * Modal functions
+     * These functions handle the modal's state and appearance
+     * openModal: Prepares and shows the modal for a specific task type
+     * closeModal: Cleans up and hides the modal
+     * Both functions maintain the UI state and form data
+     */
+    function openModal(type) {
+        taskTypeInput.value = type;
+        
+        // Set appropriate modal title
+        const titles = {
+            habit: "Add a Habit",
+            daily: "Add a Daily",
+            todo: "Add a To Do",
+            reward: "Add a Reward"
+        };
+        modalTitle.textContent = titles[type] || "Add New Task";
+        
+        // Show/hide relevant fields
+        pointsGroup.style.display = type === "reward" ? "block" : "none";
+        timeGroup.style.display = type === "daily" ? "block" : "none";
+        
+        // Add due date field for todos if not already present
+        if (type === "todo" && !document.getElementById("dueDate")) {
+            const dueDateGroup = document.createElement("div");
+            dueDateGroup.className = "form-group";
+            dueDateGroup.innerHTML = `
+                <label class="form-label" for="dueDate">Due Date</label>
+                <input type="date" class="form-input" id="dueDate">
+            `;
+            taskForm.insertBefore(dueDateGroup, taskForm.lastElementChild);
+        }
+        
+        modal.style.display = "block";
+    }
+
+    function closeModal() {
+        modal.style.display = "none";
+        taskForm.reset();
+    }
+
+    /**
+     * Task Management Functions
+     * These functions handle the core task operations:
+     * addTask: Creates new tasks and updates storage
+     * renderTask: Creates the visual representation of tasks
+     * Both functions maintain data consistency and UI updates
+     */
+    function addTask(type, taskData) {
+        const taskId = Date.now().toString();
+        const newTask = {
+            id: taskId,
+            ...taskData,
+            completed: false,
+            createdAt: new Date().toISOString(),
+            lastCompleted: null,
+            tab: type === "reward" ? document.querySelector(`.rewards .tab.active`).textContent : null
+        };
+        
+        appData[`${type}s`].push(newTask);
+        saveData(appData);
+        renderTask(type, newTask);
+    }
+
+    function renderTask(type, task) {
+        
+        const listId = `${type}s-list`;
+        const taskList = document.getElementById(listId);
+        
+        const taskElement = document.createElement("div");
+        taskElement.className = `task-item ${task.completed ? 'completed' : ''}`;
+        taskElement.dataset.id = task.id;
+        
+        // Set background color based on completion status
+        const bgColor = task.completed ? '#24CC8F' : 
+                        type === 'habit' ? '#7B90A8' :
+                        type === 'daily' || type === 'todo' ? '#F9954A' :
+                        type === 'reward' ? '#F8CE70' : '#7B90A8';
+        
+        taskElement.innerHTML = `
+            <div class="task-left-area" style="background-color: ${bgColor};">
+                <button class="task-plus">${task.completed ? '✓' : '+'}</button>
+            </div>
+            <div class="task-content">
+                <div class="task-title">${task.title}</div>
+                ${task.description ? `<div class="task-notes">${task.description}</div>` : ''}
+                ${type === 'daily' && task.startTime && task.endTime ? 
+                    `<div class="task-time">${formatTime(task.startTime)} - ${formatTime(task.endTime)}</div>` : ''}
+                ${type === 'todo' && task.dueDate ? 
+                    `<div class="task-due ${getDueStatus(task.dueDate)}">${getDueText(task.dueDate)}</div>` : ''}
+            </div>
+            <div class="task-actions">
+                <button class="task-options">⋮</button>
+                <div class="options-dropdown" style="display: none;">
+                    <div class="option-item move-top">
+                        <span class="option-icon">↑</span>
+                        To top
+                    </div>
+                    <div class="option-item move-bottom">
+                        <span class="option-icon">↓</span>
+                        To bottom
+                    </div>
+                    <div class="option-item delete">
+                        <span class="option-icon">🗑</span>
+                        Delete
+                    </div>
+                </div>
+            </div>
+            ${type === 'reward' ? `<div class="reward-points">${task.points || 10}</div>` : ''}
+        `;
+
+        // Task completion handler
+        const plusButton = taskElement.querySelector('.task-plus');
+        const leftArea = taskElement.querySelector('.task-left-area');
+        
+        plusButton.addEventListener('click', () => {
+            const completed = !task.completed;
+            task.completed = completed;
+            task.lastCompleted = completed ? new Date().toISOString() : null;
+            
+            // Update UI
+            taskElement.classList.toggle('completed', completed);
+            leftArea.style.backgroundColor = completed ? '#24CC8F' : bgColor;
+            plusButton.textContent = completed ? '✓' : '+';
+            
+            // Update data and save
+            const taskIndex = appData[`${type}s`].findIndex(t => t.id === task.id);
+            if (taskIndex !== -1) {
+                appData[`${type}s`][taskIndex] = task;
+                localStorage.setItem('taskManagementData', JSON.stringify(appData));
+            }
+            
+            // Send message to parent window for coin logic
+            window.parent.postMessage({
+                type: 'taskCompleted',
+                taskType: type,
+                completed: completed
+            }, '*');
+
+            // For daily tasks, handle visibility directly
+            if (type === 'daily') {
+                const section = taskElement.closest('.section');
+                if (section) {
+                    const currentTab = section.querySelector('.tab.active')?.textContent;
+                    if (currentTab === 'Due' || currentTab === 'Not Due') {
+                        taskElement.style.display = completed ? 'none' : 'flex';
+                    }
+                }
+            }
+        });
+
+        // Options dropdown handler
+        const optionsButton = taskElement.querySelector('.task-options');
+        const optionsDropdown = taskElement.querySelector('.options-dropdown');
+        
+        optionsButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            optionsDropdown.style.display = optionsDropdown.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Handle option clicks
+        optionsDropdown.querySelector('.move-top').addEventListener('click', () => {
+            moveTaskToTop(type, task.id);
+            optionsDropdown.style.display = 'none';
+        });
+
+        optionsDropdown.querySelector('.move-bottom').addEventListener('click', () => {
+            moveTaskToBottom(type, task.id);
+            optionsDropdown.style.display = 'none';
+        });
+
+        optionsDropdown.querySelector('.delete').addEventListener('click', () => {
+            deleteTask(type, task.id);
+            optionsDropdown.style.display = 'none';
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!optionsButton.contains(e.target) && !optionsDropdown.contains(e.target)) {
+                optionsDropdown.style.display = 'none';
+            }
+        });
+
+        // Add to appropriate position in the list
+        taskList.appendChild(taskElement);
+        updateTaskVisibility(type, taskElement);
+    }
+
+    /**
+     * Helper Functions
+     * These utility functions handle various formatting and status calculations:
+     * formatTime: Converts time strings to readable format
+     * getDueStatus: Determines if a task is due or not
+     * getDueText: Generates human-readable due date text
+     */
+    function formatTime(timeStr) {
+        if (!timeStr) return '';
+        const [hours, minutes] = timeStr.split(':');
+        const hour = parseInt(hours);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const displayHour = hour % 12 || 12;
+        return `${displayHour}:${minutes} ${ampm}`;
+    }
+
+    function getDueStatus(dueDate) {
+        if (!dueDate) return '';
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const due = new Date(dueDate);
+        return due < today ? 'due' : 'not-due';
+    }
+
+    function getDueText(dueDate) {
+        if (!dueDate) return '';
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const due = new Date(dueDate);
+        
+        if (due.toDateString() === today.toDateString()) {
+            return 'Due Today';
+        }
+        
+        const diffDays = Math.floor((due - today) / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 0) {
+            return 'Due Today';
+        } else if (diffDays === 1) {
+            return 'Due Tomorrow';
+        } else if (diffDays === -1) {
+            return 'Due Yesterday';
+        } else if (diffDays < 0) {
+            return `Due ${Math.abs(diffDays)} days ago`;
+        } else {
+            return `Due in ${diffDays} days`;
+        }
+    }
+
+    /**
+     * Task Manipulation Functions
+     * These functions handle task reordering and deletion:
+     * moveTaskToTop: Moves a task to the beginning of its list
+     * moveTaskToBottom: Moves a task to the end of its list
+     * deleteTask: Removes a task from the list and storage
+     */
+    function moveTaskToTop(type, taskId) {
+        const tasks = appData[`${type}s`];
+        const index = tasks.findIndex(t => t.id === taskId);
+        if (index > 0) {
+            const [task] = tasks.splice(index, 1);
+            tasks.unshift(task);
+            saveData(appData);
+            renderLists();
+        }
+    }
+
+    function moveTaskToBottom(type, taskId) {
+        const tasks = appData[`${type}s`];
+        const index = tasks.findIndex(t => t.id === taskId);
+        if (index >= 0 && index < tasks.length - 1) {
+            const [task] = tasks.splice(index, 1);
+            tasks.push(task);
+            saveData(appData);
+            renderLists();
+        }
+    }
+
+    function deleteTask(type, taskId) {
+        appData[`${type}s`] = appData[`${type}s`].filter(t => t.id !== taskId);
+        saveData(appData);
+        document.querySelector(`.task-item[data-id="${taskId}"]`)?.remove();
+    }
+
+    /**
+     * Task Visibility Functions
+     * These functions handle the visibility of tasks based on their status and tab selection:
+     * updateTaskVisibility: Updates a single task's visibility
+     * updateAllTaskVisibility: Updates visibility for all tasks
+     * Both functions maintain the UI state based on task properties and user preferences
+     */
+    function updateTaskVisibility(type, taskElement) {
+        const taskId = taskElement.dataset.id;
+        const task = appData[`${type}s`].find(t => t.id === taskId);
+        if (!task) return;
+        const tabContainer = taskElement.closest('.section');
+        if (!tabContainer) return;
+        const currentTab = tabContainer.querySelector('.tab.active')?.textContent;
+        if (!currentTab) return;
+        let shouldShow = true;
+        if (type === 'daily') {
+            // Custom dailies logic
+            const now = new Date();
+            let endTimeDate = null;
+            if (task.endTime) {
+                const [endHour, endMinute] = task.endTime.split(':');
+                endTimeDate = new Date(now);
+                endTimeDate.setHours(parseInt(endHour), parseInt(endMinute), 0, 0);
+            }
+            const isPastEnd = endTimeDate && now > endTimeDate;
+            if (currentTab === 'All') {
+                shouldShow = true;
+            } else if (currentTab === 'Due') {
+                shouldShow = isPastEnd && !task.completed;
+            } else if (currentTab === 'Not Due') {
+                shouldShow = (!isPastEnd && !task.completed) || task.completed;
+            }
+            taskElement.style.display = shouldShow ? 'flex' : 'none';
+            return;
+        }
+        switch (type) {
+            case 'habit':
+                if (currentTab === 'All') shouldShow = true;
+                else if (currentTab === 'Weak') shouldShow = !task.completed;
+                else if (currentTab === 'Strong') shouldShow = task.completed;
+                break;
+            case 'todo':
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const dueDate = task.dueDate ? new Date(task.dueDate) : null;
+                if (currentTab === 'Active') shouldShow = !task.completed;
+                else if (currentTab === 'Scheduled') shouldShow = !task.completed && dueDate && dueDate >= today;
+                else if (currentTab === 'Complete') shouldShow = task.completed;
+                break;
+            case 'reward':
+                if (currentTab !== 'All') {
+                    shouldShow = task.tab === currentTab;
+                }
+                break;
+        }
+        taskElement.style.display = shouldShow ? 'flex' : 'none';
+    }
+
+    function updateAllTaskVisibility() {
+        document.querySelectorAll('.task-item').forEach(taskElement => {
+            const section = taskElement.closest('.section');
+            if (!section) return;
+            if (section.classList.contains('dailies')) {
+                const currentTab = section.querySelector('.tab.active')?.textContent;
+                const taskId = taskElement.dataset.id;
+                const task = appData.dailies.find(t => t.id === taskId);
+                if (task) {
+                    const now = new Date();
+                    let endTimeDate = null;
+                    if (task.endTime) {
+                        const [endHour, endMinute] = task.endTime.split(':');
+                        endTimeDate = new Date(now);
+                        endTimeDate.setHours(parseInt(endHour), parseInt(endMinute), 0, 0);
+                    }
+                    const isPastEnd = endTimeDate && now > endTimeDate;
+                    if (currentTab === 'All') {
+                        taskElement.style.display = 'flex';
+                    } else if (currentTab === 'Due') {
+                        taskElement.style.display = (isPastEnd && !task.completed) ? 'flex' : 'none';
+                    } else if (currentTab === 'Not Due') {
+                        taskElement.style.display = ((!isPastEnd && !task.completed) || task.completed) ? 'flex' : 'none';
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Tab Switching Functions
+     * These functions handle the tab navigation and filtering:
+     * setupTabSwitching: Initializes tab click handlers
+     * Each tab click updates the visibility of tasks based on the selected filter
+     */
+    function setupTabSwitching() {
+        document.querySelectorAll('.tabs .tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from siblings
+                const siblings = Array.from(tab.parentElement.children);
+                siblings.forEach(sib => sib.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Update visibility of all tasks in this section
+                const section = tab.closest('.section');
+                const type = section.classList.contains('habits') ? 'habits' :
+                            section.classList.contains('dailies') ? 'dailies' :
+                            section.classList.contains('todos') ? 'todos' :
+                            section.classList.contains('rewards') ? 'rewards' : null;
+                
+                if (type) {
+                    const taskElements = section.querySelectorAll('.task-item');
+                    taskElements.forEach(el => updateTaskVisibility(type.replace(/s$/, ''), el));
+                }
+            });
+        });
+    }
+
+    /**
+     * List Rendering Functions
+     * These functions handle the initial rendering and updates of task lists:
+     * renderLists: Clears and re-renders all task lists
+     * This ensures the UI stays in sync with the underlying data
+     */
+    function renderLists() {
+        // Clear all lists
+        document.querySelectorAll('.task-list').forEach(list => list.innerHTML = '');
+        
+        // Render each task
+        Object.entries(appData).forEach(([type, tasks]) => {
+            tasks.forEach(task => renderTask(type.replace(/s$/, ''), task));
+        });
+    }
+
+    /**
+     * Add Task Button Menu
+     * This section handles the task type selection menu:
+     * Creates a dropdown menu for selecting task types
+     * Handles positioning and click-outside behavior
+     * Each menu item opens the appropriate task creation modal
+     */
+    document.querySelector('.add-task-btn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        
+        // Remove existing menu if any
+        const existingMenu = document.querySelector('.task-type-menu');
+        if (existingMenu) {
+            existingMenu.remove();
+            return;
+        }
+
+        const menu = document.createElement('div');
+        menu.className = 'task-type-menu';
+        
+        const options = [
+            { type: 'habit', name: 'Habit', symbol: '±' },
+            { type: 'daily', name: 'Daily', symbol: '☐' },
+            { type: 'todo', name: 'To Do', symbol: '☐' },
+            { type: 'reward', name: 'Reward', symbol: '☆' }
+        ];
+
+        options.forEach(opt => {
+            const item = document.createElement('div');
+            item.className = `task-type-item task-type-${opt.type}`;
+            item.innerHTML = `
+                <div class="task-type-icon">${opt.symbol}</div>
+                ${opt.name}
+            `;
+            
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openModal(opt.type);
+                menu.remove();
+            });
+            
+            menu.appendChild(item);
+        });
+
+        // Position menu below button
+        const rect = this.getBoundingClientRect();
+        menu.style.position = 'fixed';
+        menu.style.top = `${rect.bottom + 4}px`;
+        menu.style.left = `${rect.left}px`;
+
+        document.body.appendChild(menu);
+
+        // Close menu when clicking outside
+        const closeMenu = (e) => {
+            if (!menu.contains(e.target)) {
+                menu.remove();
+                document.removeEventListener('click', closeMenu);
+            }
+        };
+        
+        document.addEventListener('click', closeMenu);
+    });
+
+    /**
+     * Visibility Update Functions
+     * These functions handle periodic updates of task visibility:
+     * startVisibilityUpdates: Initializes the update cycle
+     * Updates task visibility immediately and then every minute
+     * Ensures tasks are properly shown/hidden based on their status
+     */
+    function startVisibilityUpdates() {
+        // Update immediately
+        updateAllTaskVisibility();
+        
+        // Then update every minute
+        setInterval(updateAllTaskVisibility, 60000);
+    }
+
+    /**
+     * Initialization Functions
+     * These functions handle the initial setup of the application:
+     * init: Sets up tab switching, renders lists, and starts visibility updates
+     * This is the main entry point for the application's functionality
+     */
+    function init() {
+        setupTabSwitching();
+        renderLists();
+        startVisibilityUpdates();
+    }
+
+    // Start the app
+    init();
+
+    /**
+     * Coin Display Functions
+     * These functions handle the display and updates of the coin counter:
+     * updateCoinDisplay: Updates the coin count in the UI
+     * Listens for storage changes and initial page load
+     * Maintains the visual representation of the user's coins
+     */
+    function updateCoinDisplay() {
+        const coinCount = document.getElementById('coinCount');
+        if (coinCount) {
+            const coins = parseInt(localStorage.getItem('coins')) || 0;
+            coinCount.textContent = coins;
+        }
+    }
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'coins') updateCoinDisplay();
+    });
+    document.addEventListener('DOMContentLoaded', updateCoinDisplay);
+
+    /**
+     * Player Appearance Functions
+     * These functions handle the display and updates of the player's avatar and frame:
+     * updatePlayerAppearance: Updates the visual representation of the player
+     * Listens for appearance changes and initial page load
+     * Maintains the visual representation of the user's selected avatar and frame
+     */
+    document.addEventListener('DOMContentLoaded', function() {
+        updateCoinDisplay();
+        // Add player appearance update logic
+        function updatePlayerAppearance() {
+            const currentAvatar = localStorage.getItem('currentAvatar');
+            const currentFrame = localStorage.getItem('currentFrame');
+            const avatarElement = document.querySelector('.player-avatar');
+            if (avatarElement && currentAvatar) {
+                avatarElement.src = currentAvatar;
+            }
+            const frameElement = document.querySelector('.frame-img');
+            if (frameElement && currentFrame) {
+                frameElement.src = currentFrame;
+            }
+        }
+        updatePlayerAppearance();
+        window.addEventListener('message', function(event) {
+            if (event.data.action === 'updatePlayerAppearance') {
+                updatePlayerAppearance();
+            }
+        });
+    });
+</script>
+</body>
+</html>

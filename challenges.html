@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Challenges</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #f5f5f5;
+      font-family: 'VT323', monospace;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    .challenges-list {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .challenge-card {
+      background: #fff;
+      border: 4px solid #7B90A8;
+      border-radius: 0px;
+      box-shadow: 0 4px 24px rgba(123,144,168,0.13);
+      padding: 28px 32px 18px 32px;
+      min-width: 520px;
+      max-width: 650px;
+      flex: 1 1 520px;
+      cursor: pointer;
+      transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 24px;
+      font-family: 'VT323', monospace;
+    }
+    .challenge-card:hover {
+      box-shadow: 0 8px 32px rgba(123,144,168,0.18);
+      transform: translateY(-6px) scale(1.04);
+      border-color: #FFC000;
+    }
+    .challenge-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2a2834;
+      margin-bottom: 6px;
+      text-decoration: underline;
+      cursor: pointer;
+      line-height: 1.1;
+      font-family: 'VT323', monospace;
+      letter-spacing: 1px;
+    }
+    .challenge-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: #7B90A8;
+      font-family: 'VT323', monospace;
+    }
+    .challenge-prize {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: #e0f7fa;
+      color: #FFC000;
+      font-weight: bold;
+      border-radius: 0px;
+      padding: 4px 14px 4px 8px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 2px solid #FFC000;
+      box-shadow: 2px 2px 0 #7B90A8;
+      font-family: 'VT323', monospace;
+    }
+    .challenge-prize img {
+      width: 22px;
+      height: 22px;
+      image-rendering: pixelated;
+      margin-right: 4px;
+      vertical-align: middle;
+      display: inline-block;
+    }
+    .challenge-tasks {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+      margin-bottom: 4px;
+      width: 100%;
+      justify-content: space-between;
+    }
+    .task-type-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #e6e6e6;
+      border: 2px solid #7B90A8;
+      border-radius: 0px;
+      padding: 8px 0;
+      min-width: 80px;
+      font-size: 14px;
+      box-shadow: 0 2px 0 #7B90A8;
+      font-family: 'VT323', monospace;
+    }
+    .task-type-count {
+      font-size: 18px;
+      font-weight: 700;
+      color: #7B90A8;
+      margin-bottom: 1px;
+      font-family: 'VT323', monospace;
+    }
+    .task-type-label {
+      font-size: 11px;
+      color: #444;
+      font-weight: 500;
+      font-family: 'VT323', monospace;
+    }
+    /* Expanded challenge */
+    .challenge-modal-bg {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.18);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .challenge-modal {
+      background: #fff;
+      border: 4px solid #7B90A8;
+      border-radius: 0px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      max-width: 700px;
+      width: 99vw;
+      padding: 24px 24px 16px 24px;
+      position: relative;
+      z-index: 1001;
+      animation: popIn 0.25s cubic-bezier(.4,2,.6,1) 1;
+      font-family: 'VT323', monospace;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.92); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      font-size: 22px;
+      color: #aaa;
+      cursor: pointer;
+      font-weight: bold;
+      background: none;
+      border: none;
+      font-family: 'VT323', monospace;
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #2a2834;
+      margin-bottom: 8px;
+      font-family: 'VT323', monospace;
+    }
+    .modal-meta {
+      font-size: 12px;
+      color: #7B90A8;
+      margin-bottom: 10px;
+      font-family: 'VT323', monospace;
+    }
+    .modal-prize {
+      background: #e0f7fa;
+      color: #FFC000;
+      font-weight: bold;
+      border-radius: 0px;
+      padding: 4px 14px 4px 8px;
+      font-size: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      border: 2px solid #FFC000;
+      box-shadow: 2px 2px 0 #7B90A8;
+      font-family: 'VT323', monospace;
+    }
+    .modal-prize img {
+      width: 18px;
+      height: 18px;
+      image-rendering: pixelated;
+      margin-right: 4px;
+      vertical-align: middle;
+      display: inline-block;
+    }
+    .modal-description {
+      font-size: 12px;
+      color: #444;
+      margin-bottom: 18px;
+      font-family: 'VT323', monospace;
+    }
+    .modal-tasks-list {
+      margin-bottom: 18px;
+      font-family: 'VT323', monospace;
+    }
+    .modal-tasks-list h4 {
+      font-size: 13px;
+      color: #7B90A8;
+      margin: 10px 0 4px 0;
+      font-family: 'VT323', monospace;
+    }
+    .modal-tasks-list ul {
+      margin: 0 0 0 16px;
+      padding: 0;
+      font-size: 11px;
+      color: #333;
+      font-family: 'VT323', monospace;
+    }
+    .modal-btns {
+      display: flex;
+      gap: 16px;
+      margin-top: 10px;
+    }
+    .modal-btn {
+      flex: 1;
+      padding: 8px 0;
+      border: 2px solid #7B90A8;
+      border-radius: 0px;
+      font-size: 13px;
+      font-family: 'VT323', monospace;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+      background: #fff;
+      color: #7B90A8;
+    }
+    .join-btn {
+      background: #FFC000;
+      color: #2A2834;
+      border-color: #FFC000;
+    }
+    .join-btn:hover {
+      background: #FFD54F;
+      color: #2A2834;
+    }
+    .leave-btn {
+      background: #f44336;
+      color: #fff;
+      border-color: #f44336;
+    }
+    .leave-btn:hover {
+      background: #d32f2f;
+      color: #fff;
+    }
+    @media (max-width: 1200px) {
+      .challenges-list { flex-direction: column; gap: 24px; align-items: center; }
+      .challenge-card { max-width: 99vw; min-width: 0; }
+      .challenge-tasks { flex-wrap: wrap; gap: 8px; }
+      .task-type-box { min-width: 60px; font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 style="color:#7B90A8; font-size:2rem; margin-bottom:24px;">Embark on an adventure — only the bold will prevail.</h1>
+    <div class="challenges-list" id="challengesList"></div>
+  </div>
+  <div id="challengeModalRoot"></div>
+  <script>
+    // Predefined challenges
+    const challenges = [
+      {
+        id: 'calm2025',
+        title: 'Keep Calm and Carry On! (May 2025)',
+        description: 'A challenge to help you stay calm and focused throughout May. Complete the daily and habit tasks to win the prize!',
+        prize: 10,
+        createdBy: 'Ashritha',
+        habits: [
+          { title: 'Take a deep breath', description: 'Pause and take 3 deep breaths.' }
+        ],
+        dailies: [
+          { title: 'Write a gratitude note', description: 'Write one thing you are grateful for today.' }
+        ],
+        todos: [],
+        rewards: []
+      },
+      {
+        id: 'focusweek',
+        title: 'Focus Week Challenge',
+        description: 'Sharpen your focus for a week! Build strong habits and complete your todos for a reward.',
+        prize: 15,
+        createdBy: 'Esha',
+        habits: [
+          { title: 'No social media in the morning', description: 'Avoid social media for the first hour after waking up.' }
+        ],
+        dailies: [
+          { title: 'Plan your day', description: 'Write down your top 3 priorities.' }
+        ],
+        todos: [
+          { title: 'Complete a Pomodoro session', description: 'Do one 25-minute focused work session.' }
+        ],
+        rewards: [
+          { title: 'Treat yourself', description: 'Enjoy a small treat for staying focused all week.' }
+        ]
+      },
+      {
+        id: 'springclean',
+        title: 'Spring Cleaning Sprint',
+        description: 'Declutter your space and mind! Join this challenge to tackle cleaning tasks and earn coins.',
+        prize: 20,
+        createdBy: 'Nidhi',
+        habits: [
+          { title: 'Tidy up desk', description: 'Spend 5 minutes tidying your workspace.' }
+        ],
+        dailies: [
+          { title: 'Make your bed', description: 'Start your day by making your bed.' }
+        ],
+        todos: [
+          { title: 'Clean out closet', description: 'Sort and organize your clothes.' },
+          { title: 'Donate unused items', description: 'Find at least 3 items to donate.' }
+        ],
+        rewards: [
+          { title: 'Buy a new plant', description: 'Reward yourself with a new plant for your space.' }
+        ]
+      }
+    ];
+
+    // Render challenge cards
+    function renderChallenges() {
+      const list = document.getElementById('challengesList');
+      list.innerHTML = '';
+      challenges.forEach(challenge => {
+        const card = document.createElement('div');
+        card.className = 'challenge-card';
+        card.innerHTML = `
+          <div class="challenge-title">${challenge.title}</div>
+          <div class="challenge-meta">
+            <span>Created by: <b>${challenge.createdBy}</b></span>
+          </div>
+          <div class="challenge-prize"><img src="coin.gif" alt="Coins">${challenge.prize}</div>
+          <div class="challenge-tasks">
+            <div class="task-type-box"><div class="task-type-count">${challenge.habits.length}</div><div class="task-type-label">Habit</div></div>
+            <div class="task-type-box"><div class="task-type-count">${challenge.dailies.length}</div><div class="task-type-label">Daily</div></div>
+            <div class="task-type-box"><div class="task-type-count">${challenge.todos.length}</div><div class="task-type-label">To Do</div></div>
+            <div class="task-type-box"><div class="task-type-count">${challenge.rewards.length}</div><div class="task-type-label">Reward</div></div>
+          </div>
+        `;
+        card.addEventListener('click', () => openChallengeModal(challenge));
+        list.appendChild(card);
+      });
+    }
+
+    // Modal logic
+    function openChallengeModal(challenge) {
+      const modalRoot = document.getElementById('challengeModalRoot');
+      modalRoot.innerHTML = `
+        <div class="challenge-modal-bg" id="modalBg">
+          <div class="challenge-modal">
+            <button class="modal-close" id="closeModal">&times;</button>
+            <div class="modal-title">${challenge.title}</div>
+            <div class="modal-meta">Created by: <b>${challenge.createdBy}</b></div>
+            <div class="modal-prize"><img src="coin.gif" alt="Coins">${challenge.prize} Prize</div>
+            <div class="modal-description">${challenge.description}</div>
+            <div class="modal-tasks-list">
+              ${challenge.habits.length ? `<h4>Habits</h4><ul>${challenge.habits.map(h=>`<li><b>${h.title}</b>: ${h.description}</li>`).join('')}</ul>` : ''}
+              ${challenge.dailies.length ? `<h4>Dailies</h4><ul>${challenge.dailies.map(d=>`<li><b>${d.title}</b>: ${d.description}</li>`).join('')}</ul>` : ''}
+              ${challenge.todos.length ? `<h4>To Dos</h4><ul>${challenge.todos.map(t=>`<li><b>${t.title}</b>: ${t.description}</li>`).join('')}</ul>` : ''}
+              ${challenge.rewards.length ? `<h4>Rewards</h4><ul>${challenge.rewards.map(r=>`<li><b>${r.title}</b>: ${r.description}</li>`).join('')}</ul>` : ''}
+            </div>
+            <div class="modal-btns">
+              <button class="modal-btn join-btn" id="joinBtn">Join Challenge</button>
+              <button class="modal-btn leave-btn" id="leaveBtn">Leave Challenge</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById('closeModal').onclick = closeModal;
+      document.getElementById('modalBg').onclick = (e) => { if (e.target.id === 'modalBg') closeModal(); };
+      document.getElementById('joinBtn').onclick = () => joinChallenge(challenge);
+      document.getElementById('leaveBtn').onclick = () => leaveChallenge(challenge);
+    }
+    function closeModal() {
+      document.getElementById('challengeModalRoot').innerHTML = '';
+    }
+
+    // Join challenge: add tasks to localStorage (if not already present)
+    function joinChallenge(challenge) {
+      let data = JSON.parse(localStorage.getItem('taskManagementData')) || { habits: [], dailies: [], todos: [], rewards: [] };
+      // Add challenge tasks with a challengeId property
+      ['habits','dailies','todos','rewards'].forEach(type => {
+        challenge[type].forEach(task => {
+          // Avoid duplicates (by title and challengeId)
+          if (!data[type].some(t => t.title === task.title && t.challengeId === challenge.id)) {
+            data[type].push({
+              ...task,
+              id: Date.now().toString() + Math.random().toString(36).slice(2),
+              completed: false,
+              createdAt: new Date().toISOString(),
+              lastCompleted: null,
+              challengeId: challenge.id
+            });
+          }
+        });
+      });
+      localStorage.setItem('taskManagementData', JSON.stringify(data));
+      alert('Challenge joined! Tasks added.');
+      closeModal();
+    }
+    // Leave challenge: remove challenge tasks from localStorage
+    function leaveChallenge(challenge) {
+      let data = JSON.parse(localStorage.getItem('taskManagementData')) || { habits: [], dailies: [], todos: [], rewards: [] };
+      ['habits','dailies','todos','rewards'].forEach(type => {
+        data[type] = data[type].filter(t => t.challengeId !== challenge.id);
+      });
+      localStorage.setItem('taskManagementData', JSON.stringify(data));
+      alert('Challenge left! Tasks removed.');
+      closeModal();
+    }
+
+    // Initial render
+    renderChallenges();
+  </script>
+</body>
+</html>

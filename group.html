@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Quest Parties</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'VT323', monospace;
+      padding: 20px;
+      background: #f5f5f5;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+      text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+    }
+    .party {
+      margin: 20px 0;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .quests {
+      margin-top: 15px;
+      padding-left: 20px;
+    }
+    .quest-item {
+      display: block;
+      margin: 10px 0;
+      padding: 12px;
+      background: #f0f8ff;
+      border-radius: 6px;
+      font-size: 16px;
+      color: #2c3e50;
+    }
+    .no-parties {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-size: 18px;
+    }
+    .party-title {
+      color: #2c3e50;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e0e0e0;
+      text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>🛡 Your Quest Parties</h1>
+  <div id="partyList"></div>
+
+  <script>
+    const partyListDiv = document.getElementById("partyList");
+    const joinedParties = JSON.parse(localStorage.getItem("joinedParties") || "[]");
+
+    if (joinedParties.length === 0) {
+      partyListDiv.innerHTML = '<div class="no-parties">No parties joined yet. Go back to join a party!</div>';
+    } else {
+      joinedParties.forEach(code => {
+        const partyData = localStorage.getItem(`party-${code}`);
+        if (!partyData) {
+          console.error(`Party data not found for code: ${code}`);
+          return;
+        }
+
+        try {
+          const party = JSON.parse(partyData);
+          const wrapper = document.createElement("div");
+          wrapper.className = "party";
+
+          const title = document.createElement("h2");
+          title.className = "party-title";
+          title.textContent = `🎉 ${party.title} (Code: ${code})`;
+          wrapper.appendChild(title);
+
+          const questDiv = document.createElement("div");
+          questDiv.className = "quests";
+
+          if (!party.quests || party.quests.length === 0) {
+            questDiv.innerHTML = '<p>No quests available for this party.</p>';
+          } else {
+            party.quests.forEach((quest, index) => {
+              const questElement = document.createElement("div");
+              questElement.className = "quest-item";
+              questElement.innerHTML = `🛡 ${quest.quest} — 🪙 ${quest.reward} coins`;
+              questDiv.appendChild(questElement);
+            });
+          }
+
+          wrapper.appendChild(questDiv);
+          partyListDiv.appendChild(wrapper);
+        } catch (error) {
+          console.error(`Error processing party ${code}:`, error);
+        }
+      });
+    }
+  </script>
+</body>
+</html>

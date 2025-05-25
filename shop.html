@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Shop UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f0f0f0;
+            font-family: 'Press Start 2P', cursive;
+            color: #333;
+            padding: 20px;
+        }
+
+        .shop-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .shop-title {
+            color: #6a3cb5;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .user-coins {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background-color: #ffde59;
+            border-radius: 20px;
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .user-coins img {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .user-coins span {
+            font-size: 14px;
+        }
+
+        .category-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            background-color: #e0e0e0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+        }
+
+        .tab.active {
+            background-color: #6a3cb5;
+            color: white;
+        }
+
+        .shop-filters {
+            display: flex;
+            gap: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .filter-group select {
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: #6a3cb5;
+        }
+
+        .category-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .shop-category {
+            display: none;
+        }
+
+        .shop-category.active {
+            display: block;
+        }
+
+        .items-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: flex-start;
+        }
+
+        /* This ensures items align to the left when not filling a row */
+        .items-grid::after {
+            content: "";
+            flex: auto;
+        }
+
+        .shop-item {
+            position: relative;
+            width: calc(20% - 12px); /* 5 items per row with gap */
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .shop-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .item-actions {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-btn {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .action-btn img {
+            width: 12px;
+            height: 12px;
+        }
+
+        .purple {
+            background-color: #6a3cb5;
+        }
+
+        .favorited {
+            background-color: #f7c200;
+        }
+
+        .item-image {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .item-image img {
+            max-width: 100%;
+            max-height: 100%;
+            image-rendering: pixelated;
+        }
+
+        .item-price {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+
+        .item-price img {
+            width: 16px;
+            height: 16px;
+        }
+
+        .buy-button {
+            margin-top: 10px;
+            background-color: #6a3cb5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 15px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .owned-label {
+            margin-top: 10px;
+            color: #4CAF50;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+        }
+
+        /* Locked item style */
+        .shop-item.locked {
+            position: relative;
+            opacity: 0.9;
+        }
+
+        .shop-item.locked::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            z-index: 1;
+        }
+
+        .lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            color: white;
+            text-align: center;
+        }
+
+        .lock-overlay .lock-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .lock-overlay .level-text {
+            font-size: 8px;
+            padding: 0 10px;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        /* Responsive design */
+        @media (max-width: 992px) {
+            .shop-item {
+                width: calc(25% - 12px); /* 4 items per row */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .shop-item {
+                width: calc(33.333% - 10px); /* 3 items per row */
+            }
+            
+            .category-navigation {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .shop-item {
+                width: calc(50% - 8px); /* 2 items per row */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shop-container">
+        <h1 class="shop-title">Shop</h1>
+        
+        <div class="user-coins">
+            <img src="coin.gif" alt="Coin">
+            <span id="coin-count">0</span>
+        </div>
+        
+        <div class="category-navigation">
+            <div class="category-tabs">
+                <button class="tab active" data-category="frames">Frames</button>
+                <button class="tab" data-category="avatars">Avatars</button>
+            </div>
+            
+            <div class="shop-filters">
+                <div class="filter-group">
+                    <span>Sort By</span>
+                    <select>
+                        <option>Price</option>
+                        <option>Newest</option>
+                        <option>Rarity</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div id="toast" class="toast"></div>
+        
+        <!-- Frames Category -->
+        <div class="shop-category active" id="frames-category">
+            <h2 class="category-title">Frames</h2>
+            
+            <div class="items-grid" id="frames-grid">
+                <!-- Items will be generated by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Avatars Category -->
+        <div class="shop-category" id="avatars-category">
+            <h2 class="category-title">Avatars</h2>
+            
+            <div class="items-grid" id="avatars-grid">
+                <!-- Items will be generated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // COIN LOGIC: Use coins from localStorage (shared with dashboard/tasks)
+            function getCoins() {
+                return parseInt(localStorage.getItem('coins')) || 0;
+            }
+            function setCoins(newAmount) {
+                localStorage.setItem('coins', newAmount);
+            }
+            function updateCoinDisplay() {
+                document.getElementById('coin-count').textContent = getCoins();
+            }
+            // Listen for coin changes in other tabs
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'coins') updateCoinDisplay();
+            });
+            // Initialize coins if not set
+            if (localStorage.getItem('coins') === null) {
+                localStorage.setItem('coins', '0');
+            }
+            // Get owned items from localStorage or initialize empty array
+            const existingOwnedItems = JSON.parse(localStorage.getItem('ownedItems')) || [];
+            // Create a Set of item IDs for fast lookups
+            const ownedItems = new Set(existingOwnedItems.map(item => item.id));
+            // Show a toast notification message
+            function showToast(message, duration = 3000) {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, duration);
+            }
+            // Buy an item
+            function buyItem(itemId, price, itemEl) {
+                let coins = getCoins();
+                if (ownedItems.has(itemId)) {
+                    showToast('You already own this item!');
+                    return;
+                }
+                if (coins >= price) {
+                    // Deduct coins
+                    coins -= price;
+                    setCoins(coins);
+                    updateCoinDisplay();
+                    // Mark as owned locally
+                    ownedItems.add(itemId);
+                    // Find the item data from the frames or avatars array
+                    const isAvatar = itemId.startsWith('a');
+                    let itemData;
+                    if (isAvatar) {
+                        itemData = avatarItems.find(item => item.id === itemId);
+                    } else {
+                        itemData = frameItems.find(item => item.id === itemId);
+                    }
+                    // Save to localStorage
+                    const existingItems = JSON.parse(localStorage.getItem('ownedItems')) || [];
+                    existingItems.push({
+                        id: itemId,
+                        image: itemData.image,
+                        price: itemData.price
+                    });
+                    localStorage.setItem('ownedItems', JSON.stringify(existingItems));
+                    // Update the UI
+                    const buyButton = itemEl.querySelector('.buy-button');
+                    buyButton.remove();
+                    const ownedLabel = document.createElement('div');
+                    ownedLabel.className = 'owned-label';
+                    ownedLabel.textContent = 'OWNED';
+                    itemEl.appendChild(ownedLabel);
+                    showToast(`Item purchased for ${price} coins!`);
+                } else {
+                    showToast(`Not enough coins! You need ${price - coins} more.`);
+                }
+            }
+            
+            // Handle locked item click based on level requirement
+            function handleLockedItemClick(level) {
+                showToast(`Reach level ${level} to unlock this item!`);
+            }
+            
+            // Tab switching functionality
+            const tabs = document.querySelectorAll('.tab');
+            const categories = document.querySelectorAll('.shop-category');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    categories.forEach(c => c.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    
+                    const categoryId = this.getAttribute('data-category') + '-category';
+                    document.getElementById(categoryId).classList.add('active');
+                });
+            });
+            
+            // Frame data (id, price, image, locked status, level requirement)
+            const frameItems = [
+                { id: 'f1', price: 30, image: 'frames_pxl/frame1.png', locked: false },
+                { id: 'f2', price: 70, image: 'frames_pxl/frame2.png', locked: false },
+                { id: 'f3', price: 45, image: 'frames_pxl/frame3.png', locked: false },
+                { id: 'f4', price: 60, image: 'frames_pxl/frame4.png', locked: false },
+                { id: 'f5', price: 90, image: 'frames_pxl/frame5.png', locked: true, level: 2 },
+                { id: 'f6', price: 35, image: 'frames_pxl/frame6.png', locked: true, level: 3 },
+                { id: 'f7', price: 50, image: 'frames_pxl/frame7.png', locked: true, level: 4 },
+                { id: 'f8', price: 55, image: 'frames_pxl/frame8.png', locked: true, level: 5 },
+                { id: 'f9', price: 80, image: 'frames_pxl/frame9.png', locked: true, level: 6 },
+                { id: 'f10', price: 40, image: 'frames_pxl/frame10.png', locked: true, level: 7 },
+                { id: 'f11', price: 75, image: 'frames_pxl/frame11.png', locked: true, level: 8 },
+
+            ];
+            
+            // Avatar data (id, price, image, locked status, level requirement)
+            const avatarItems = [
+                { id: 'a1', price: 25, image: 'avatar_pxl/girl.png', locked: false },
+                { id: 'a2', price: 35, image: 'avatar_pxl/boy.png', locked: false },
+                { id: 'a3', price: 45, image: 'avatar_pxl/avatar15.png', locked: false },
+                { id: 'a4', price: 60, image: 'avatar_pxl/avatar1.png', locked: false },
+                { id: 'a5', price: 75, image: 'avatar_pxl/avatar2.png', locked: false },
+                { id: 'a6', price: 30, image: 'avatar_pxl/avatar3.png', locked: false },
+                { id: 'a7', price: 40, image: 'avatar_pxl/avatar4.png', locked: true, level: 2 },
+                { id: 'a8', price: 50, image: 'avatar_pxl/avatar5.png', locked: true, level: 3 },
+                { id: 'a9', price: 65, image: 'avatar_pxl/avatar6.png', locked: true, level: 4 },
+                { id: 'a10', price: 80, image: 'avatar_pxl/avatar7.png', locked: true, level: 5 },
+                { id: 'a11', price: 25, image: 'avatar_pxl/avatar8.png', locked: true, level: 6 },
+                { id: 'a12', price: 55, image: 'avatar_pxl/avatar9.png', locked: true, level: 7 },
+                { id: 'a13', price: 70, image: 'avatar_pxl/avatar10.png', locked: true, level: 8 },
+                { id: 'a14', price: 85, image: 'avatar_pxl/avatar11.png', locked: true, level: 9 },
+                { id: 'a15', price: 95, image: 'avatar_pxl/avatar12.png', locked: true, level: 10 }
+            ];
+            
+            // Sort items by price
+            function sortItems(items, sortOrder) {
+                return [...items].sort((a, b) => {
+                    // First sort by locked status
+                    if (a.locked !== b.locked) {
+                        return a.locked ? 1 : -1; // Unlocked items come first
+                    }
+                    
+                    // Then sort by price
+                    if (sortOrder === 'asc') {
+                        return a.price - b.price;
+                    } else {
+                        return b.price - a.price;
+                    }
+                });
+            }
+
+            // Generate shop items
+            function generateShopItems() {
+                const framesGrid = document.getElementById('frames-grid');
+                const avatarsGrid = document.getElementById('avatars-grid');
+                const sortSelect = document.querySelector('.filter-group select');
+                
+                framesGrid.innerHTML = '';
+                avatarsGrid.innerHTML = '';
+                
+                // Get current sort order
+                const sortOrder = sortSelect.value === 'Price' ? 'asc' : 'desc';
+                
+                // Sort items
+                const sortedFrames = sortItems(frameItems, sortOrder);
+                const sortedAvatars = sortItems(avatarItems, sortOrder);
+                
+                // Create frame items
+                sortedFrames.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = `shop-item ${item.locked ? 'locked' : ''}`;
+                    itemElement.dataset.id = item.id;
+                    itemElement.dataset.price = item.price;
+                    
+                    if (item.locked) {
+                        itemElement.innerHTML = `
+                            <div class="item-image">
+                                <img src="${item.image}" alt="Frame ${item.id}">
+                            </div>
+                            <div class="item-price">
+                                <img src="coin.gif" alt="Coin"> ${item.price}
+                            </div>
+                            <div class="lock-overlay">
+                                <div class="lock-icon">🔒</div>
+                                <div class="level-text">Reach Level ${item.level} to Unlock</div>
+                            </div>
+                        `;
+                        
+                        itemElement.addEventListener('click', function() {
+                            handleLockedItemClick(item.level);
+                        });
+                    } else {
+                        itemElement.innerHTML = `
+                            <div class="item-image">
+                                <img src="${item.image}" alt="Frame ${item.id}">
+                            </div>
+                            <div class="item-price">
+                                <img src="coin.gif" alt="Coin"> ${item.price}
+                            </div>
+                            ${ownedItems.has(item.id) ? 
+                              '<div class="owned-label">OWNED</div>' : 
+                              '<button class="buy-button">BUY</button>'}
+                        `;
+                        
+                        // Add buy button listener if not owned
+                        if (!ownedItems.has(item.id)) {
+                            itemElement.querySelector('.buy-button').addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                buyItem(item.id, item.price, itemElement);
+                            });
+                        }
+                    }
+                    
+                    framesGrid.appendChild(itemElement);
+                });
+                
+                // Create avatar items
+                sortedAvatars.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = `shop-item ${item.locked ? 'locked' : ''}`;
+                    itemElement.dataset.id = item.id;
+                    itemElement.dataset.price = item.price;
+                    
+                    if (item.locked) {
+                        itemElement.innerHTML = `
+                            <div class="item-image">
+                                <img src="${item.image}" alt="Avatar ${item.id}">
+                            </div>
+                            <div class="item-price">
+                                <img src="coin.gif" alt="Coin"> ${item.price}
+                            </div>
+                            <div class="lock-overlay">
+                                <div class="lock-icon">🔒</div>
+                                <div class="level-text">Reach Level ${item.level} to Unlock</div>
+                            </div>
+                        `;
+                        
+                        itemElement.addEventListener('click', function() {
+                            handleLockedItemClick(item.level);
+                        });
+                    } else {
+                        itemElement.innerHTML = `
+                            <div class="item-image">
+                                <img src="${item.image}" alt="Avatar ${item.id}">
+                            </div>
+                            <div class="item-price">
+                                <img src="coin.gif" alt="Coin"> ${item.price}
+                            </div>
+                            ${ownedItems.has(item.id) ? 
+                              '<div class="owned-label">OWNED</div>' : 
+                              '<button class="buy-button">BUY</button>'}
+                        `;
+                        
+                        // Add buy button listener if not owned
+                        if (!ownedItems.has(item.id)) {
+                            itemElement.querySelector('.buy-button').addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                buyItem(item.id, item.price, itemElement);
+                            });
+                        }
+                    }
+                    
+                    avatarsGrid.appendChild(itemElement);
+                });
+            }
+            
+            // Add event listener for sort select
+            document.querySelector('.filter-group select').addEventListener('change', generateShopItems);
+            
+            // Initialize
+            updateCoinDisplay();
+            generateShopItems();
+        });
+    </script>
+</body>
+</html>

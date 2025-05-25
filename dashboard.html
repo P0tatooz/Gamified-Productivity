@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'VT323', monospace;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow-y: auto; /* Prevent scrollbar from appearing */
+      display: flex;
+      flex-direction: column; /* Ensure body is a flex container */
+    }
+    .header, .header2 {
+      position: relative;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .header {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      height: 55px;
+      padding: 0;
+      background-color: #98AAC1;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      gap: 16px;
+      position: relative;
+      overflow: visible;
+      width: 100%;
+      margin: 0;
+      z-index: 10;
+      flex-shrink: 0; /* Prevent header from shrinking */
+    }
+
+    .header2 {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      height: 185px;
+      padding: 0;
+      background-color: #7B90A8;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      gap: 16px;
+      position: relative;
+      overflow: visible; /* Prevent scrollbar from appearing */
+      width: 100%;
+      margin: 0;
+      z-index: 5;
+      flex-shrink: 0; /* Prevent header from shrinking */
+    }
+
+    .logo {
+      width: 120px;
+      height: 120px;
+      object-fit: contain; /* Maintain aspect ratio, prevent distortion of logo */
+      margin: 0;
+      align-self: center;
+      padding: 0;
+      margin-left: -25px;
+      position: absolute;
+      left: 0px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+      cursor: pointer;
+    }
+    .menu { /* Menu links */
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      font-family: 'VT323', monospace;
+      font-size: 20px;
+      letter-spacing: 1px;
+      font-weight: 500;
+      color: black;
+      margin-left: 250px;
+      margin-top: 3.5px;
+      text-transform: none;
+    }
+    
+    .menu a { /* Menu links */
+      cursor: pointer;
+      padding: 4px 8px;
+      position: relative;
+      transition: all 0.3s ease;
+      user-select: none; /* Prevent text selection of links by the user because it interferes with the click event */
+      display: inline-block;
+      text-decoration: none; /* Remove underline */
+      color: inherit; /* Inherit color from parent */
+    }
+    
+    .menu a:hover { /* Hover effect*/
+      color: #f44336;
+    }
+    
+    .menu a.active { /* Active link */
+      color: #f44336;
+      text-shadow: 2px 2px 4px rgba(244, 67, 54, 0.2);
+      position: relative;
+    }
+    
+    .menu a.active::after { /* Active link underline, after means pseudo element.. after a  */
+      content: ''; /* Empty content for pseudo element */
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: #f44336;
+      pointer-events: none; /* Prevent interaction with the pseudo element */
+    }
+
+    .currency-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: absolute;
+      right: 90px;
+    }
+
+    .currency-item {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .currency-item:first-child .currency-icon {
+      width: 50px;
+      height: 50px;
+      margin-top: 2px;
+    }
+
+    .currency-item:last-child .currency-icon {
+      width: 100px;
+      height: 70px;
+      margin-right: -20px;
+    }
+
+    .currency-item:last-child {
+      gap: 2px;
+      align-items: center;
+      margin-right: 35px;
+    }
+
+    .currency-item:first-child {
+      margin-right: -8px;
+    }
+
+    .currency-count {
+      color: #333;
+      font-weight: 600;
+      font-family: 'VT323', monospace;
+      font-size: 20px;
+      align-self: center;
+    }
+    .profile-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #ddd;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      color: #555;
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+      font-weight: normal;
+    }
+    .profile-dropdown {
+      position: absolute;
+      top: 60px;
+      right: 25px;
+      width: 250px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      padding: 15px;
+      display: none;
+      z-index: 1002;
+    }
+    .profile-dropdown.active {
+      display: block;
+    }
+    .account-details {
+      margin-bottom: 15px;
+    }
+    .account-details h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #333;
+      font-family: 'VT323', monospace;
+      font-weight: normal;
+    }
+    .account-details p {
+      margin: 8px 0;
+      font-size: 16px;
+      color: #555;
+      display: flex;
+      justify-content: space-between;
+      font-family: 'VT323', monospace;
+      font-weight: normal;
+    }
+    .account-details p span:last-child {
+      font-weight: bold;
+      color: #333;
+    }
+    .dropdown-actions button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      font-family: 'VT323', monospace;
+      font-weight: normal;
+    }
+    .dropdown-actions button:hover {
+      background-color: #d32f2f;
+    }
+    .player-frame {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin-left: -50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .frame-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+    }
+
+    .player-avatar {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60%;
+      height: 60%;
+      object-fit: contain;
+      image-rendering: pixelated; /* Pixelated effect */
+      z-index: 2;
+    }
+
+    .player-avatar-bg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40%;
+      height: 40%;
+      background: linear-gradient(
+        to bottom,
+        #008E97 70%,
+        #005f69 30%
+      );
+      border-radius: 0px;
+      padding: 4px;
+      z-index: 1;
+    }
+
+    .player-info {
+      display: flex;
+      flex-direction: column;
+      margin-left: -30px;
+      padding: 10px;
+      color: #fff;
+    }
+
+    .display-name {
+      font-size: 32px;
+      color: #fff;
+      margin: 0 0 5px 0;
+      text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+    }
+
+    .username {
+      font-size: 20px;
+      color: #ccd7e4;
+      margin: 0 0 5px 0;
+    }
+
+    .level-indicator {
+      font-size: 18px;
+      color: #FFC000;
+      margin: 0 0 10px 0;
+      text-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+    }
+
+    .level-indicator span {
+      font-size: 22px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .progress-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-left: 0;
+    }
+
+    .bar-container {
+      width: 200px;
+      height: 12px;
+      background: #2A2834;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 0px;
+      position: relative;
+      overflow: visible;
+    }
+
+    .bar-label {
+      position: absolute;
+      left: -35px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #fff;
+      font-size: 14px;
+      white-space: nowrap;
+      font-family: 'VT323', monospace;
+    }
+
+    .bar-value {
+      position: absolute;
+      right: -65px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #fff;
+      font-size: 14px;
+      white-space: nowrap;
+      font-family: 'VT323', monospace;
+    }
+
+    .bar-fill {
+      height: 100%;
+      transition: width 0.3s ease;
+      border-radius: 0;
+    }
+
+    .exp-bar .bar-fill {
+      width: 0%;
+      background: linear-gradient(90deg, #FFC000, #FFD700);
+      transition: width 0.5s ease-in-out;
+    }
+
+    .life-bar .bar-fill {
+      width: 100%;
+      background: #DA2C43;
+    }
+
+    @keyframes levelUp { /* Level up animation, @keyframes is used to create animations */
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    .level-up {
+      animation: levelUp 0.5s ease-in-out;
+    }
+
+    .loot-image {
+        width: 150px;
+        height: auto;
+        position: absolute;
+        right: 150px;
+        top: 50%;
+        transform: translateY(-50%);
+        image-rendering: pixelated;
+    }
+
+    .coin-stack {
+      position: absolute;
+      right: 40px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 120px;
+      height: auto;
+      image-rendering: pixelated;
+      filter: brightness(0.9);
+    }
+
+    .party-invite {
+      position: absolute;
+      right: 380px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 250px;
+      text-align: left;
+      color: #fff;
+      font-family: 'VT323', monospace;
+    }
+
+    .party-invite h3 {
+      font-size: 18px;
+      margin: 0 0 10px 0;
+      color: #FFC000;
+      text-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+    }
+
+    .party-invite p {
+      font-size: 14px;
+      line-height: 1.4;
+      margin: 0;
+      color: #ccd7e4;
+    }
+
+    .party-button {
+      background: #FFC000;
+      color: #2A2834;
+      border: none;
+      padding: 8px 12px;
+      font-family: 'ariel', monospace;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      display: block;
+      margin: 10px auto 0;
+      margin-right: px;
+      width: fit-content;
+    }
+
+    .party-button:hover {
+      background: #FFD54F;
+    }
+
+    .search-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin: 20px auto;
+      width: 80%;
+    }
+
+    .search-bar {
+      width: 300px;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: 'VT323', monospace;
+    }
+
+    .tags-dropdown {
+      position: relative;
+      display: inline-block;
+      z-index: 1002;
+    }
+
+    .tags-button {
+      padding: 8px 12px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'VT323', monospace;
+    }
+
+    .tags-content {
+      display: none;
+      position: absolute;
+      background: #fff;
+      min-width: 200px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      z-index: 1;
+      padding: 10px;
+      border-radius: 4px;
+    }
+
+    .tags-content.show {
+      display: block;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .task-checkbox {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .task-checkbox:checked + .task-text {
+      color: #4CAF50;
+      text-decoration: line-through;
+    }
+
+    iframe { /* Iframe for loading different pages*/
+      width: 100%;
+      border: none;
+      height: calc(100vh - 240px);
+      min-height: 800px;
+    }
+
+    body {
+      font-family: 'VT323', monospace;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      flex-shrink: 0;
+    }
+
+    .header2 {
+      flex-shrink: 0;
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #c4c4c4;
+      border-radius: 6px;
+      border: 2px solid #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+
+    html { /* Ensure the scrollbar is always visible */
+      scroll-behavior: smooth;
+      height: 100%;
+    }
+
+    @keyframes lifeDecrease {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); background-color: #ff4444; }
+      100% { transform: scale(1); }
+    }
+
+    .diamond-animate {
+      animation: diamondPop 0.7s cubic-bezier(.4,2,.6,1);
+    }
+    @keyframes diamondPop { /* Diamond animation */
+      0% { transform: scale(1); color: #00bfae; }
+      40% { transform: scale(1.3); color: #FFC000; }
+      100% { transform: scale(1); color: #333; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="icon.png" alt="App Icon" class="logo">
+    <div class="menu">
+      <a href="tasks.html" class="active" data-page="tasks">Tasks</a>
+      <a href="inventory.html" data-page="inventory">Inventory</a>
+      <a href="shop.html" data-page="shop">Shop</a>
+      <a href="party.html" data-page="party">Party</a>
+      <a href="group.html" data-page="group">Group</a>
+      <a href="challenges.html" data-page="challenges">Challenges</a>
+      <a href="help.html" data-page="help">Help</a>
+    </div>
+
+    <div class="currency-container">
+      <div class="currency-item">
+        <img src="coin.gif" alt="Coins" class="currency-icon">
+        <span class="currency-count">0</span>
+      </div>
+      <div class="currency-item">
+        <img src="diamond.png" alt="Diamonds" class="currency-icon">
+        <span class="currency-count">0</span>
+      </div>
+    </div>
+    <div class="profile-icon" id="profileIcon"></div>
+  </div>
+  
+
+  <div class="header2">
+    <div class="player-frame">
+      <img src="frame.png" alt="Player Frame" class="frame-img">
+      <div class="player-avatar-bg"></div>
+      <img src="player-avatar.png" alt="Player Avatar" class="player-avatar">
+    </div>
+    <div class="player-info">
+      <h2 class="display-name" id="displayName">Display Name</h2>
+      <p class="username" id="username">@username</p>
+      <div class="level-indicator">Level <span id="levelCount">1</span></div>
+      <div class="progress-bars">
+        <div class="bar-container life-bar">
+          <span class="bar-label">LIFE</span>
+          <div class="bar-fill"></div>
+          <span class="bar-value">100/100</span>
+        </div>
+        <div class="bar-container exp-bar">
+          <span class="bar-label">EXP</span>
+          <div class="bar-fill"></div>
+          <span class="bar-value" id="expValue">0/100</span>
+        </div>
+      </div>
+    </div>
+    <div class="party-invite">
+      <h3>Team up with a fellow adventurer!</h3>
+      <p>Invite a friend to your Party and unlock an exclusive quest — complete challenges together and earn even greater rewards!</p>
+      <button class="party-button">Find Party Members</button>
+    </div>
+    <img src="loot.png" alt="Loot" class="loot-image">
+    <img src="coin-stack.png" alt="Coin Stack" class="coin-stack">
+  </div>
+
+  <iframe src="tasks.html" style="width: 100%; border: none; height: calc(100vh - 240px);"></iframe>
+
+  <div class="profile-dropdown" id="profileDropdown">
+    <div class="account-details">
+      <h3>Account Details</h3>
+      <p><span>Name:</span> <span id="userName">-</span></p>
+      <p><span>Email:</span> <span id="userEmail">-</span></p>
+      <p><span>Username:</span> <span id="userUsername">-</span></p>
+      <p><span>Level:</span> <span id="userLevel">1</span></p>
+      <p><span>Total EXP:</span> <span id="userExp">0</span></p>
+    </div>
+    <div class="dropdown-actions">
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const profileIcon = document.getElementById('profileIcon'); // Profile icon
+    const profileDropdown = document.getElementById('profileDropdown'); // Profile dropdown
+    const userName = document.getElementById('userName'); // User name
+    const userEmail = document.getElementById('userEmail'); // User email
+    const userUsername = document.getElementById('userUsername'); // User username
+    const userLevel = document.getElementById('userLevel'); // User level
+    const userExp = document.getElementById('userExp'); // User experience
+    const logoutBtn = document.getElementById('logoutBtn'); // Logout button
+    const levelCount = document.getElementById('levelCount'); // Level count
+    const expValue = document.getElementById('expValue'); // Experience value
+    const displayNameElement = document.getElementById('displayName'); // Display name
+    const usernameElement = document.getElementById('username'); // Username
+
+    // Check authentication and load user data
+    function checkAuth() {
+      // Check if user is logged in
+      // If not, redirect to login page
+      // If user is logged in, load user data
+      // and update profile icon
+      const userData = JSON.parse(localStorage.getItem('user'));
+      // Check if user data exists, if not redirect to login page
+      if (!userData) {
+        window.location.href = 'index.html';
+      } else {
+        // Initialize EXP if not exists
+        if (typeof userData.exp === 'undefined') {
+          // Initialize EXP to 0
+          userData.exp = 0;
+          localStorage.setItem('user', JSON.stringify(userData)); // Update local storage, initialize EXP
+          // Update EXP display
+        }
+        
+        // Set profile icon (first letter of display name)
+        profileIcon.textContent = userData.name ? userData.name.charAt(0).toUpperCase() : 'U';
+        // Set profile icon background color
+        
+        // Update header display name and username
+        if (displayNameElement && userData.name) {
+          displayNameElement.textContent = userData.name;
+        }
+        
+        if (usernameElement && userData.username) {
+          usernameElement.textContent = `@${userData.username}`;
+          // Update profile icon with username
+          // ${...} is used to embed a variable or expression directly inside a string.
+          // This is called template literal syntax.
+          // @${userData.username} becomes something like @ashritha123 if userData.username = "ashritha123".
+        }
+        
+        // Update profile dropdown details
+        // This refers to an HTML element on the page (like a <span> or <div>) that’s meant to display the user's name.
+        userName.textContent = userData.name || '-'; //
+        userEmail.textContent = userData.email || '-';
+        userUsername.textContent = userData.username ? `@${userData.username}` : '-';
+        
+        // Update level and EXP display
+        updateExpDisplay(userData.exp); // Update EXP display based on user data
+      }
+    }
+
+    // Daily EXP system
+    function updateExpSystem() {
+      const userData = JSON.parse(localStorage.getItem('user')) || {}; // Get user data from local storage
+      // Get today's date in YYYY-MM-DD format
+      // This is used to check if the user has already logged in today.
+      // The split('T')[0] part is used to get only the date part (YYYY-MM-DD) from the full ISO string.
+      // The toISOString() method converts a Date object to a string in the ISO 8601 format (YYYY-MM-DDTHH:mm:ss.sssZ). 
+      // The split('T') method splits the string into two parts: date and time, and we take the first part (date).
+      // This is done to ensure that the date is in a consistent format for comparison.
+      // The new Date() creates a new Date object with the current date and time.
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Initialize EXP, lastVisit, and diamonds if they don't exist
+      userData.exp = userData.exp || 0; // Initialize EXP to 0 if it doesn't exist
+      // lastVisit is used to check if the user has already logged in today.
+      // If lastVisit doesn't exist, set it to an empty string.
+      // This is done to ensure that the lastVisit date is in a consistent format for comparison.
+      // The lastVisit is used to check if the user has already logged in today.
+      // If lastVisit doesn't exist, set it to an empty string.
+      // This is done to ensure that the lastVisit date is in a consistent format for comparison
+      userData.lastVisit = userData.lastVisit || '';
+      if (typeof userData.diamonds === 'undefined') {
+        // Initialize diamonds to 0 if it doesn't exist
+        // This is done to ensure that the diamonds count is in a consistent format for comparison
+        // and to prevent any errors when trying to access the diamonds property.
+        // The diamonds property is used to store the number of diamonds the user has.
+        // If diamonds doesn't exist, set it to 0.
+
+        userData.diamonds = 0;
+      }
+      
+      if (userData.lastVisit !== today) { // Check if the user has logged in today
+        // If the user has not logged in today, update EXP and lastVisit
+        // Increment EXP by 1
+        // The lastVisit is used to check if the user has already logged in today.
+        // If lastVisit doesn't exist, set it to an empty string.
+        const oldLevel = Math.floor(userData.exp / 100) + 1;
+        // this math is used to calculate the level based on EXP
+        // old level is used to check if the user has leveled up.
+        // If the user has not logged in today, update EXP and lastVisit
+        userData.exp += 1;
+        userData.lastVisit = today;
+        // Award 10 diamonds for daily login
+        userData.diamonds += 10;
+        localStorage.setItem('user', JSON.stringify(userData));
+        // Update EXP and diamonds display
+        // local storage is used to store the user data in the browser.
+        // This allows the user data to persist even after the page is refreshed or closed.
+
+        
+        // Check for level up
+        const newLevel = Math.floor(userData.exp / 100) + 1; 
+        // this math is used to calculate the level based on EXP
+        if (newLevel > oldLevel) { // Check if the user has leveled up
+          triggerLevelUp(); // Trigger level up animation
+        }
+        
+        updateExpDisplay(userData.exp); // Update EXP display
+        // Update diamonds display
+        updateDiamondDisplay(userData.diamonds, true); // animate
+      } else { // User has already logged in today
+        // No action needed, just update the diamonds display
+        updateDiamondDisplay(userData.diamonds, false); // no animation
+      }
+    }
+
+    // Update EXP display
+    function updateExpDisplay(exp) {
+      const level = Math.floor(exp / 100) + 1;
+      // this math is used to calculate the level based on EXP
+      // level is used to check if the user has leveled up.
+      // The level is calculated by dividing the EXP by 100 and adding 1.
+      // The level is used to display the user's current level.
+      // The level is used to display the user's current level.
+
+      const expInCurrentLevel = exp % 100; // EXP in the current level,
+      //  %100 means the remainder of the division, why cuz we want to know how much EXP the user has in the current level
+      const expNeededForNextLevel = 100; 
+      // EXP needed for the next level
+      // The EXP needed for the next level is 100.
+      // The EXP needed for the next level is used to calculate the percentage of the EXP bar.
+      
+      // Update level display
+      if (levelCount) { // Check if levelCount element exists
+        levelCount.textContent = level; // Update level count
+      }
+      if (userLevel) { 
+        // Check if userLevel element exists,
+        //  userlevel is different from levelcount as it displays the level in a different context
+        // as in the profile dropdown
+        // where userLevel is used to display the user's level
+        // and levelCount is used to display the user's level in the header
+        userLevel.textContent = level; // Update user level
+      }
+      if (userExp) {
+        userExp.textContent = exp; // Update user EXP, .textcontent means the text inside the element
+      }
+      
+      // Update EXP bar
+      const expBarFill = document.querySelector('.exp-bar .bar-fill');
+      // queryselector is used to select the element with the class exp-bar and
+      //  the child element with the class bar-fill
+      // The querySelector method returns the first element that matches the specified selector.
+      // The querySelector method is used to select the element with
+      //  the class exp-bar and the child element with the class bar-fill
+      // The querySelector method is used to select the element with
+      //  the class exp-bar and the child element with the class bar-fill
+      if (expBarFill && expValue) {
+        // Check if expBarFill and expValue elements exist
+        // expBarFill is used to update the width of the EXP bar
+        // expValue is used to display the current EXP and the EXP needed for the next level
+        const percentage = (expInCurrentLevel / expNeededForNextLevel) * 100;
+        // Calculate percentage of EXP in current level
+        // The percentage is calculated by dividing the EXP in the current level by the EXP needed for the next level
+        expBarFill.style.width = `${percentage}%`; // Update width of EXP bar
+        // The style.width property is used to set the width of the element
+        expValue.textContent = `${expInCurrentLevel}/${expNeededForNextLevel}`;
+        // Update EXP value display
+        // The textContent property is used to set the text content of the element
+      }
+    }
+
+    // Level up animation
+    function triggerLevelUp() { // Trigger level up animation
+      // This function is called when the user levels up
+      // The function is used to trigger the level up animation
+      if (levelCount) { 
+        // Check if levelCount element exists
+        // levelCount is used to display the user's level
+        // and the level is used to display the user's level in the header
+        levelCount.classList.add('level-up'); // Add level-up class to trigger animation
+        // The classList property returns the class name(s) of an element
+        // The classList property is used to add the level-up class to the levelCount element
+        setTimeout(() => { // Remove level-up class after animation
+          // The setTimeout method is used to execute a function after a specified number of milliseconds
+          // The setTimeout method is used to remove the level-up class from the levelCount element
+          levelCount.classList.remove('level-up'); 
+        }, 500); // 500 milliseconds
+      }
+      console.log("Level up!"); // Log level up message to console
+      // The console.log method is used to log the level up message to the console
+    }
+
+    // Toggle profile dropdown
+    function toggleProfileDropdown() { // Toggle profile dropdown
+      // This function is called when the user clicks on the profile icon
+      // The function is used to toggle the profile dropdown
+      // The profileDropdown element is the dropdown menu that appears when the user clicks on their profile icon
+
+      profileDropdown.classList.toggle('active'); // Toggle active class
+      // The classList property returns the class name(s) of an element
+      // The classList property is used to toggle the active class on the profileDropdown element
+      // The toggle method adds the class if it doesn't exist, and removes it if it does
+      // The toggle method is used to add or remove the active class from the profileDropdown element
+      // The active class is used to show or hide the profile dropdown
+      // The profileDropdown element is the dropdown menu that appears when the user clicks on their profile icon
+
+    }
+
+    // Handle logout
+    function handleLogout() {
+      localStorage.removeItem('user');
+      // Remove user data from local storage
+      // The removeItem method is used to remove the user data from local storage
+      sessionStorage.removeItem('pixelLoginUserData'); // Remove session data
+      // The removeItem method is used to remove the user data from session storage
+      // The sessionStorage object stores data for the duration of the page session
+      window.location.href = 'index.html'; // Redirect to login page
+    }
+
+    // Close dropdown when clicking outside
+    function handleClickOutside(event) { // Close dropdown when clicking outside
+      // This function is called when the user clicks outside the profile dropdown
+      // The function is used to close the profile dropdown when the user clicks outside of it
+      // The event parameter is the event object that is passed to the function
+      // The event object contains information about the event that occurred
+      // The event object is used to check if the user clicked outside the profile dropdown
+      // The event.target property returns the element that triggered the event
+      // The event.target property is used to check if the user clicked outside the profile dropdown
+      // The profileIcon and profileDropdown elements are the profile icon and dropdown menu
+      // that appear when the user clicks on their profile icon
+      if (!profileIcon.contains(event.target) && !profileDropdown.contains(event.target)) { 
+        // Check if the user clicked outside the profile dropdown
+        // The contains method returns true if the element is a descendant of the specified element
+        // The contains method is used to check if the user clicked outside the profile dropdown
+    
+        profileDropdown.classList.remove('active');
+        // Remove active class to close dropdown
+        // The classList property returns the class name(s) of an element
+        // The classList property is used to remove the active class from the profileDropdown element
+        // The remove method removes the class from the profileDropdown element
+        // The active class is used to show or hide the profile dropdown
+        
+      }
+    }
+
+    // Initialize dashboard
+    document.addEventListener('DOMContentLoaded', function() { 
+      // This function is called when the DOM content is loaded
+      // The DOMContentLoaded event is fired when the initial HTML document has been completely loaded and parsed
+      // without waiting for stylesheets, images, and subframes to finish loading
+      // The DOMContentLoaded event is used to initialize the dashboard
+      checkAuth(); // Check authentication
+      // The checkAuth function is called to check if the user is logged in
+      // Always update diamond display on load
+      const userData = JSON.parse(localStorage.getItem('user')) || {};
+      // The userData variable is used to store the user data from local storage
+      // The JSON.parse method is used to convert the user data from a JSON string to a JavaScript object
+      // The JSON.parse method is used to convert the user data from a JSON string to a JavaScript object
+      // The || operator is used to set the userData variable to an empty object if the user data doesn't exist
+      // The userData variable is used to store the user data from local storage
+
+      // Auto-correct diamonds if out of sync with EXP (10 diamonds per 1 EXP)
+      if (typeof userData.exp === 'number' && (typeof userData.diamonds === 'undefined' || userData.diamonds !== userData.exp * 10)) {
+        // If diamonds are out of sync, correct them
+        // The if statement checks if the userData.exp is a number and if the userData.diamonds is undefined
+        //  or not equal to userData.exp * 10
+        // The userData.exp is used to calculate the number of diamonds the user has
+        userData.diamonds = userData.exp * 10;
+        localStorage.setItem('user', JSON.stringify(userData));
+        // The localStorage.setItem method is used to update the user data in local storage
+        // The JSON.stringify method is used to convert the user data from a JavaScript object to a JSON string
+      }
+      updateDiamondDisplay(userData.diamonds || 0, false);
+      // The updateDiamondDisplay function is called to update the diamond display
+      // The userData.diamonds variable is used to store the number of diamonds the user has
+      // The || operator is used to set the diamond display to 0 if the user data doesn't exist
+      updateExpSystem(); // Update EXP system
+      // The updateExpSystem function is called to update the EXP system
+      checkAndUpdateLife(); // Check and update life
+      // The checkAndUpdateLife function is called to check and update the life system
+      
+      // Navigation handling
+      const menuContainer = document.querySelector('.menu'); // Menu container
+      // The menuContainer variable is used to store the menu container element
+      // The querySelector method is used to select the element with the class menu
+      const iframe = document.querySelector('iframe');
+      // The iframe variable is used to store the iframe element
+      // ifram here is used to load different pages
+      
+      menuContainer.addEventListener('click', function(e) { // Menu click handler
+        // This function is called when the user clicks on the menu
+        // The function is used to handle the menu click event
+        // The e parameter is the event object that is passed to the function
+        // The event object contains information about the event that occurred
+        // The event object is used to check if the user clicked on a menu item
+        const clickedLink = e.target.closest('a');
+        if (!clickedLink) return;
+        
+        e.preventDefault(); // Prevent default link behavior
+        
+        menuContainer.querySelectorAll('a').forEach(link => { 
+          // Remove active class from all links
+          // The querySelectorAll method is used to select all the links in the menu
+          // The forEach method is used to iterate over each link in the menu
+          link.classList.remove('active');
+        });
+        
+        clickedLink.classList.add('active'); 
+        // Add active class to clicked link
+        // The clickedLink variable is used to store the link that was clicked
+        // The classList property returns the class name(s) of an element
+        // The classList property is used to add the active class to the clicked link
+        // The active class is used to highlight the clicked link
+        // Load the corresponding page in the iframe
+        // The iframe variable is used to store the iframe element
+        // The src attribute of the iframe element is used to load different pages
+        
+        const page = clickedLink.getAttribute('data-page'); // Get page from data attribute
+        // The getAttribute method is used to get the value of the data-page attribute
+        // The data-page attribute is used to store the name of the page to load
+        // The page variable is used to store the name of the page to load
+        if (page) {
+          iframe.src = `${page}.html`; // Load the corresponding page
+          // The src attribute of the iframe element is used to load different pages
+        }
+      });
+      
+      // Set Tasks as default page
+      const tasksLink = menuContainer.querySelector('a[data-page="tasks"]');
+      // The tasksLink variable is used to store the link to the tasks page
+      // The querySelector method is used to select the link with the data-page attribute set to tasks
+      // The tasksLink variable is used to store the link to the tasks page
+
+      if (tasksLink) {
+        // If tasks link exists, set it as active
+        // The tasksLink variable is used to store the link to the tasks page
+        tasksLink.classList.add('active');
+        iframe.src = 'tasks.html';
+        // Load tasks page by default
+        // The src attribute of the iframe element is used to load different pages
+      }
+
+      // Event listeners
+      profileIcon.addEventListener('click', toggleProfileDropdown);
+      // Toggle profile dropdown on click
+      // The profileIcon variable is used to store the profile icon element
+      // The toggleProfileDropdown function is called to toggle the profile dropdown
+      logoutBtn.addEventListener('click', handleLogout); // Handle logout
+      // The logoutBtn variable is used to store the logout button element
+      // The handleLogout function is called to handle the logout event
+      // Close dropdown when clicking outside
+      document.addEventListener('click', handleClickOutside);
+
+      // Logo click handler
+      const logo = document.querySelector('.logo'); // Logo element
+      // The logo variable is used to store the logo element
+      // The querySelector method is used to select the element with the class logo
+      // The logo variable is used to store the logo element
+      // Load tasks page on logo click
+      logo.addEventListener('click', function() { // Logo click handler
+        // This function is called when the user clicks on the logo
+        // The function is used to handle the logo click event
+        // The e parameter is the event object that is passed to the function
+        // The event object contains information about the event that occurred
+        // The event object is used to check if the user clicked on the logo
+        iframe.src = 'tasks.html'; // Load tasks page
+        // The src attribute of the iframe element is used to load different pages
+        // The tasks page is loaded when the user clicks on the logo
+        // Remove active class from all links
+        // The querySelectorAll method is used to select all the links in the menu
+        // The forEach method is used to iterate over each link in the menu
+        // The menuContainer variable is used to store the menu container element
+        menuContainer.querySelectorAll('a').forEach(link => {
+          link.classList.remove('active');
+        });
+        const tasksLink = menuContainer.querySelector('a[data-page="tasks"]');
+        // The tasksLink variable is used to store the link to the tasks page
+        // The querySelector method is used to select the link with the data-page attribute set to tasks
+        // The tasksLink variable is used to store the link to the tasks page
+        // Add active class to tasks link
+        // The classList property returns the class name(s) of an element
+        // The classList property is used to add the active class to the tasks link
+        // The active class is used to highlight the clicked link
+
+        if (tasksLink) { // Check if tasks link exists
+          tasksLink.classList.add('active');
+          // Add active class to tasks link
+          // The tasksLink variable is used to store the link to the tasks page
+          // The classList property returns the class name(s) of an element
+        }
+      });
+
+      // Party button click handler
+      const partyButton = document.querySelector('.party-button');
+      partyButton.addEventListener('click', function() {
+        iframe.src = 'party.html';
+        menuContainer.querySelectorAll('a').forEach(link => {
+          link.classList.remove('active');
+        });
+        const partyLink = menuContainer.querySelector('a[data-page="party"]');
+        if (partyLink) {
+          partyLink.classList.add('active');
+        }
+      });
+    });
+
+    // Add these new functions before the DOMContentLoaded event listener
+    function checkAndUpdateLife() {
+        const userData = JSON.parse(localStorage.getItem('user')) || {};
+        const today = new Date().toISOString().split('T')[0];
+        
+        // Initialize life if not exists
+        if (typeof userData.life === 'undefined') {
+            userData.life = 100;
+            localStorage.setItem('user', JSON.stringify(userData));
+        }
+        
+        // Check if it's a new day
+        if (userData.lastLifeCheck !== today) {
+            const taskData = JSON.parse(localStorage.getItem('taskManagementData')) || {};
+            const tasksCompleted = checkTasksCompletion(taskData);
+            
+            if (!tasksCompleted) {
+                // Decrease life by 5
+                userData.life = Math.max(0, userData.life - 5);
+                localStorage.setItem('user', JSON.stringify(userData));
+                
+                // Show life decrease animation
+                showLifeDecreaseAnimation();
+            }
+            
+            // Update last check date
+            userData.lastLifeCheck = today;
+            localStorage.setItem('user', JSON.stringify(userData));
+        }
+        
+        // Update life bar display
+        updateLifeDisplay(userData.life);
+    }
+
+    function checkTasksCompletion(taskData) {
+        const today = new Date().toISOString().split('T')[0];
+        let completed = false;
+        
+        // Check all task types
+        ['habits', 'dailies', 'todos'].forEach(type => {
+            const tasks = taskData[type] || [];
+            tasks.forEach(task => {
+                if (task.lastCompleted && task.lastCompleted.split('T')[0] === today) {
+                    completed = true;
+                }
+            });
+        });
+        
+        return completed;
+    }
+
+    function updateLifeDisplay(life) {
+        const lifeBarFill = document.querySelector('.life-bar .bar-fill');
+        const lifeValue = document.querySelector('.life-bar .bar-value');
+        
+        if (lifeBarFill && lifeValue) {
+            lifeBarFill.style.width = `${life}%`;
+            lifeValue.textContent = `${life}/100`;
+        }
+    }
+
+    function showLifeDecreaseAnimation() {
+        const lifeBar = document.querySelector('.life-bar');
+        if (lifeBar) {
+            lifeBar.style.animation = 'none';
+            lifeBar.offsetHeight; // Trigger reflow
+            lifeBar.style.animation = 'lifeDecrease 0.5s ease-in-out';
+        }
+    }
+
+    // Update diamond display
+    function updateDiamondDisplay(diamonds, animate) {
+      // Find the diamond count span (second .currency-count)
+      const diamondCount = document.querySelectorAll('.currency-count')[1];
+      if (diamondCount) {
+        diamondCount.textContent = diamonds;
+        if (animate) {
+          diamondCount.classList.add('diamond-animate');
+          setTimeout(() => diamondCount.classList.remove('diamond-animate'), 700);
+        }
+      }
+    }
+
+    // Coin system with direct DOM manipulation
+    const coinSystem = {
+      coins: 0,
+      displayElement: null,
+      
+      init() {
+        this.displayElement = document.querySelector('.currency-container .currency-item:first-child .currency-count');
+        if (!this.displayElement) {
+          console.error('Coin display element not found');
+          return;
+        }
+        this.syncFromStorage();
+        this.updateDisplay();
+      },
+      syncFromStorage() {
+        try {
+          const storedCoins = localStorage.getItem('coins');
+          this.coins = parseInt(storedCoins) || 0;
+        } catch (error) {
+          console.error('Error getting coins from localStorage:', error);
+          this.coins = 0;
+        }
+      },
+      add(amount) {
+        this.coins += amount;
+        try {
+          localStorage.setItem('coins', this.coins.toString());
+        } catch (error) {
+          console.error('Error saving coins to localStorage:', error);
+        }
+        this.updateDisplay();
+      },
+      updateDisplay() {
+        this.syncFromStorage();
+        if (this.displayElement) {
+          this.displayElement.textContent = this.coins;
+        } else {
+          this.displayElement = document.querySelector('.currency-container .currency-item:first-child .currency-count');
+          if (this.displayElement) {
+            this.displayElement.textContent = this.coins;
+          }
+        }
+      }
+    };
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'coins') coinSystem.updateDisplay();
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+      coinSystem.updateDisplay();
+    });
+
+    // Coin logic for task completion
+    function handleTaskCompletion(taskType, completed) {
+      if (!completed) return; // Only increment/decrement on check
+      const coinValues = {
+        'habit': 100,
+        'daily': 10,
+        'todo': 50,
+        'reward': -15
+      };
+      const amount = coinValues[taskType];
+      if (amount === undefined) return;
+      coinSystem.add(amount);
+    }
+
+    // Handle task completion messages from iframe
+    window.addEventListener('message', function(event) {
+      if (event.data && typeof event.data === 'object') {
+        if (event.data.type === 'taskCompleted' && event.data.taskType) {
+          handleTaskCompletion(event.data.taskType, event.data.completed);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
