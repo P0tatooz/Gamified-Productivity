@@ -1,0 +1,135 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head>
+  <meta charset="UTF-8" /> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connecting...</title> 
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');  
+
+    * {
+      box-sizing: border-box; /* Applies border-box model to all elements */
+    }
+
+    body {
+      margin: 0; 
+      height: 100vh; /* Sets body height to full viewport height */
+      overflow: hidden; /* Prevents scrolling */
+      background: #000;
+      font-family: 'Press Start 2P', monospace;
+      color: #0f0; 
+      display: flex; /* Enables flexbox layout, control over alignment, spacing, and direction of the items. */
+      align-items: center; /* Vertically centers items */
+      justify-content: center; /* Horizontally centers items */
+      flex-direction: column; /* Arranges items in a column */
+      position: relative; /* Positions relative to allow z-index stacking */
+      z-index: 1; /* Places content above background video */
+    }
+
+    video#bg-video { /* Selects a <video> element with the ID of "bg-video" */
+      position: fixed; /* Fixes video to viewport */
+      top: 50%; /* Centers vertically */
+      left: 50%; /* Centers horizontally */
+      min-width: 100%; /* Ensures video covers width */
+      min-height: 100%; /* Ensures video covers height */
+      width: auto; /* Auto width for aspect ratio */
+      height: auto; /* Auto height for aspect ratio */
+      z-index: 0; /* Puts video behind content */
+      object-fit: cover; /* Ensures video fills without distortion */
+      transform: translate(-50%, -50%) rotate(90deg); /* Centers and rotates video */
+      filter: brightness(1.2); /* Increases brightness slightly */
+    }
+
+    .title {
+      font-size: 14px; 
+      margin-bottom: 20px;
+      text-shadow: 0 0 4px #0f0; 
+      z-index: 2; 
+    }
+
+    .loader-wrapper { /* Container for loader and percent text */
+      display: flex;
+      align-items: center; 
+      gap: 10px; 
+      z-index: 2; 
+    }
+
+    .loader-container { /* Loader bar container */
+      width: 300px; 
+      height: 20px; 
+      background: #111; 
+      border: 3px solid #0f0; 
+      display: flex;
+      padding: 2px; 
+      gap: 2px; 
+      position: relative; /* For positioning elements inside */
+      box-shadow: 0 0 10px #0f0;
+    }
+
+    .pixel { /* Individual pixel bar */
+      flex: 1; /* Each pixel takes equal space */
+      background: #050; /* Default dark green background */
+      transition: background 0.2s; /* Smooth transition for color change */
+    }
+
+    .pixel.filled {
+      background: #0f0; /* Bright green when filled */
+    }
+
+    .percent-text {
+      font-size: 12px; 
+      color: #00ff00; 
+      text-shadow: 0 0 2px #00ff00, 0 0 5px #00ff00, 0 0 8px #00ff00; 
+      -webkit-text-stroke: 0.3px #003300; /* Adds subtle text stroke for contrast */
+    }
+  </style>
+</head>
+
+<!-- Background -->
+<body>
+
+  <video autoplay muted loop playsinline id="bg-video"> <!-- Background video element with autoplay and no sound -->
+    <source src="landing-bg.mp4" type="video/mp4">
+    Your browser does not support the video tag. <!-- Fallback message for unsupported browsers -->
+  </video>
+
+  <!-- Foreground -->
+  <div class="title">Connecting...</div> 
+
+  <div class="loader-wrapper"> <!-- Container for loader and percent text -->
+    <div class="loader-container" id="loader"></div> <!-- Loader bar container -->
+    <div class="percent-text" id="percent">0%</div>
+  </div>
+
+  <script>
+    const loader = document.getElementById('loader'); // Gets loader container element
+    const percent = document.getElementById('percent'); // Gets percent text element
+    const video = document.getElementById('bg-video'); // Gets video element
+    video.playbackRate = 0.7; 
+
+    const totalPixels = 30; // Total number of pixels in the loader
+    const pixels = []; // Array to hold pixel elements
+
+    for (let i = 0; i < totalPixels; i++) { // Loop to create pixel bars
+      const pixel = document.createElement('div'); // Creates a div element for each pixel, not yet visible on page
+      pixel.classList.add('pixel'); // Adds a CSS class called "pixel" to the newly created div.
+      loader.appendChild(pixel); // Adds that div into the loader element, Now the pixel becomes visible on the webpage.
+      pixels.push(pixel); // Adds pixel to pixels array, Stores a reference to this div in the pixels array
+    }
+
+    let filled = 0; // Counter for filled pixels
+    const interval = setInterval(() => { // Starts interval timer
+      if (filled < totalPixels) { // If not all pixels filled
+        pixels[filled].classList.add('filled'); // Fills next pixel
+        // Adds the CSS class filled to the next pixel in the array, visually marking it as "loaded."
+        filled++; // Increments filled counter
+        percent.innerText = Math.round((filled / totalPixels) * 100) + '%'; // Updates percent text
+      } else { // when all pixels are filled
+        clearInterval(interval); // Stops interval when loading is done
+        window.location.href = "login.html"; // Redirects to login page
+      }
+    }, 90); // Interval speed in milliseconds
+  </script>
+
+</body>
+</html>
