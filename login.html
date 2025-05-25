@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pixel Login</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Press Start 2P', monospace;
+      height: 100vh;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      overflow: hidden; /* is a CSS property value used to hide anything that overflows the boundaries of an element. */
+      position: relative;
+    }
+
+    .bg-container { /* Background container for the pixelated tiles */
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr); /* 6 equal columns */
+      grid-template-rows: repeat(3, 1fr); /* 3 equal rows */
+      /*fr = fractional unit, 1fr = 1 fraction of the available space */
+    }
+
+    .bg-tile { /* Individual tile styles */
+      opacity: 0.3;
+      background-size: cover;
+      background-position: center;
+      filter: blur(0.1px);
+    }
+
+    .tile1  { grid-area: 1 / 1 / 2 / 2; background-image: url('login-pixel-bg/pixel-bg-1.jpeg'); } 
+    /* The grid-area property specifies a grid item's size and location in a grid layout */
+    /* The grid-area property is a shorthand for grid-row-start, grid-column-start, grid-row-end, and grid-column-end */
+    /* The grid-area property can also be used to specify the name of the grid item, Each .tileN occupies exactly one cell in this grid.*/
+    /* 1 / 1 / 2 / 2  means row 1 start, column 1 start, row 2 end, column 2 end, So .tile1 occupies the cell at row 1, column 1.*/
+    .tile2  { grid-area: 2 / 1 / 3 / 2; background-image: url('login-pixel-bg/pixel-bg-2.jpeg'); }
+    .tile3  { grid-area: 3 / 1 / 4 / 2; background-image: url('login-pixel-bg/pixel-bg-3.jpeg'); }
+    .tile4  { grid-area: 1 / 2 / 2 / 3; background-image: url('login-pixel-bg/pixel-bg-4.jpeg'); }
+    .tile5  { grid-area: 2 / 2 / 3 / 3; background-image: url('login-pixel-bg/pixel-bg-5.jpeg'); }
+    .tile6  { grid-area: 3 / 2 / 4 / 3; background-image: url('login-pixel-bg/pixel-bg-6.jpeg'); }
+    .tile7  { grid-area: 1 / 3 / 2 / 4; background-image: url('login-pixel-bg/pixel-bg-7.jpeg'); }
+    .tile8  { grid-area: 2 / 3 / 3 / 4; background-image: url('login-pixel-bg/pixel-bg-8.jpeg'); }
+    .tile9  { grid-area: 3 / 3 / 4 / 4; background-image: url('login-pixel-bg/pixel-bg-9.jpeg'); }
+    .tile10 { grid-area: 1 / 4 / 2 / 5; background-image: url('login-pixel-bg/pixel-bg-10.jpeg'); }
+    .tile11 { grid-area: 2 / 4 / 3 / 5; background-image: url('login-pixel-bg/pixel-bg-11.jpeg'); }
+    .tile12 { grid-area: 3 / 4 / 4 / 5; background-image: url('login-pixel-bg/pixel-bg-12.jpeg'); }
+    .tile13 { grid-area: 1 / 5 / 2 / 6; background-image: url('login-pixel-bg/pixel-bg-13.jpeg'); }
+    .tile14 { grid-area: 2 / 5 / 3 / 6; background-image: url('login-pixel-bg/pixel-bg-14.jpeg'); }
+    .tile15 { grid-area: 3 / 5 / 4 / 6; background-image: url('login-pixel-bg/pixel-bg-15.jpeg'); }
+    .tile16 { grid-area: 1 / 6 / 2 / 7; background-image: url('login-pixel-bg/pixel-bg-16.jpeg'); }
+    .tile17 { grid-area: 2 / 6 / 3 / 7; background-image: url('login-pixel-bg/pixel-bg-17.jpeg'); }
+    .tile18 { grid-area: 3 / 6 / 4 / 7; background-image: url('login-pixel-bg/pixel-bg-18.jpeg'); }
+
+    .login-panel {
+      position: absolute;
+      background: rgba(20, 20, 20, 0.95);
+      padding: 40px 30px;
+      width: 400px;
+      text-align: center;
+      color: #ccc;
+      z-index: 1;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .login-panel h1 {
+      font-size: 12px;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .input-container {
+      position: relative;
+      width: 90%;
+      margin: 10px auto;
+    }
+
+    .login-panel input {
+      width: 100%;
+      padding: 10px;
+      font-family: 'Press Start 2P';
+      font-size: 10px;
+      background: #222;
+      color: #fff;
+      border: none;
+      outline: none;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Fix for browser autofill styling */
+    /* It’s a pseudo-class selector that applies styles to input fields
+     that have been automatically filled by the browser’s autofill feature (like saved passwords or addresses). */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+      -webkit-text-fill-color: #fff !important;
+      -webkit-box-shadow: 0 0 0 30px #222 inset !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+
+    .login-panel button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #fff;
+      border: none;
+      color: #000;
+      font-family: 'Press Start 2P';
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    .login-panel button:hover {
+      background: #ddd;
+    }
+
+    .toggle-link { /* Link to toggle between login and signup forms */
+      margin-top: 10px;
+      font-size: 9px;
+      color: #999;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .hidden { /* Class to hide elements */
+      display: none;
+    }
+
+    .error { /* Styles for error messages */
+      color: red;
+      font-size: 10px;
+      margin-top: 10px;
+      min-height: 20px; /* Fixed height for error message area */
+    }
+
+    .requirements { /* Styles for input requirements */
+      color: #888;
+      font-size: 8px;
+      margin: 5px 0;
+      text-align: left;
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Prevent autofill dropdown from covering the input fields */
+    input:-webkit-autofill-selected {
+      z-index: -1;
+      position: relative;
+    }
+
+    /* Highlight focused input */
+    input:focus {
+      box-shadow: 0 0 0 2px #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-container">
+    <div class="bg-tile tile1"></div>
+    <div class="bg-tile tile2"></div>
+    <div class="bg-tile tile3"></div>
+    <div class="bg-tile tile4"></div>
+    <div class="bg-tile tile5"></div>
+    <div class="bg-tile tile6"></div>
+    <div class="bg-tile tile7"></div>
+    <div class="bg-tile tile8"></div>
+    <div class="bg-tile tile9"></div>
+    <div class="bg-tile tile10"></div>
+    <div class="bg-tile tile11"></div>
+    <div class="bg-tile tile12"></div>
+    <div class="bg-tile tile13"></div>
+    <div class="bg-tile tile14"></div>
+    <div class="bg-tile tile15"></div>
+    <div class="bg-tile tile16"></div>
+    <div class="bg-tile tile17"></div>
+    <div class="bg-tile tile18"></div>
+  </div>
+
+  <div class="login-panel">
+    <h1 id="form-title">LOGIN TO CONTINUE</h1>
+
+    <form id="login-form" onsubmit="login(); return false;">
+      <!-- return false; prevents the page from reloading when the form submits-->
+      <div class="input-container">
+        <input type="text" id="username" placeholder="Username or Email" autocomplete="off" />
+      </div>
+      <div class="input-container">
+        <input type="password" id="password" placeholder="Password" autocomplete="off" />
+      </div>
+      <div id="error-message" class="error"></div>
+      <button type="submit">LOGIN</button>
+      <br>
+      <div class="toggle-link" tabindex="0" onclick="toggleForm()" onkeydown="if(event.key==='Enter') toggleForm()">New here? Sign up.</div>
+      <!-- A clickable link-like <div> that toggles between login and signup forms.
+
+      tabindex="0" makes it focusable by keyboard.
+
+      onclick triggers toggleForm() when clicked.
+
+      onkeydown allows toggling by pressing Enter when focused (accessibility).-->
+    </form>
+
+    <form id="signup-form" class="hidden" onsubmit="signup(); return false;">
+      <div class="input-container">
+        <input type="text" id="name" placeholder="Name" autocomplete="off" />
+      </div>
+      <div class="input-container">
+        <input type="email" id="email" placeholder="Email" autocomplete="off" />
+      </div>
+      <div class="requirements">Email must be valid format</div>
+      <div class="input-container">
+        <input type="text" id="signup-username" placeholder="Username" autocomplete="off" />
+      </div>
+      <div class="requirements">Username: 4-20 characters, alphanumeric only</div>
+      <div class="input-container">
+        <input type="password" id="signup-password" placeholder="Password" autocomplete="off" />
+      </div>
+      <div class="requirements">Password: 8+ chars, 1 uppercase, 1 number</div>
+      <div id="signup-error" class="error"></div>
+      <button type="submit">SIGN UP</button>
+      <div class="toggle-link" tabindex="0" onclick="toggleForm()" onkeydown="if(event.key==='Enter') toggleForm()">Already have an account? Login.</div>
+    </form>
+  </div>
+
+  <script>
+    // Store user data in session storage to avoid unwanted autofill
+    let storedDataKey = 'pixelLoginUserData'; // Defines a key name for storing user data in browser session storage.
+    let autoSaveEnabled = false; // flag to control auto-saving of user data
+    
+    // Setup tab indexes for proper keyboard navigation
+    function setupTabIndexes() { 
+      //  Ensures keyboard navigation order is logical by assigning 
+      // sequential tabIndex values to focusable elements (input, button, and .toggle-link) 
+      // within whichever form is currently visible.
+      // Get all focusable elements
+      const loginForm = document.getElementById('login-form'); // Grabs both forms from the DOM.
+      const signupForm = document.getElementById('signup-form'); // Grabs both forms from the DOM.
+      
+      // Set tab indexes for login form
+      // It checks which form is visible (not having the class hidden).
+      // Then assigns tabIndex starting from 1 in order for accessibility.
+      if (!loginForm.classList.contains('hidden')) {
+        const loginInputs = loginForm.querySelectorAll('input, button, .toggle-link');
+        loginInputs.forEach((element, index) => {
+          element.tabIndex = index + 1;
+        });
+      }
+      
+      // Set tab indexes for signup form
+      if (!signupForm.classList.contains('hidden')) {
+        const signupInputs = signupForm.querySelectorAll('input, button, .toggle-link');
+        signupInputs.forEach((element, index) => {
+          element.tabIndex = index + 1;
+        });
+      }
+    }
+
+    // Add input event listeners to clear error messages when user starts typing
+    document.querySelectorAll('input').forEach(input => { 
+      // querySelectorAll('input') selects all input elements in the document.
+      //  querySelectorAll() returns a NodeList of all matching elements.
+      // forEach() iterates over each input element in the NodeList.
+      // Add input event to clear error messages
+      // The input event is triggered whenever the value of an <input> or <textarea> changes.
+      // This event is fired when the user types in the input field.
+      input.addEventListener('input', function() {
+        document.getElementById('error-message').textContent = '';
+        document.getElementById('signup-error').textContent = '';
+      });
+      
+      // Add keydown event for Tab key to automatically jump to next field
+      // The keydown event is fired when the user presses a key down.
+      // Prevents the default tab behavior.
+      // Finds the next input field in the same form and focuses it.
+      // If no next input, focuses the form’s submit button.
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Tab') { // Checks if the pressed key is Tab
+          e.preventDefault(); // Prevents the default tab behavior
+          const form = this.closest('form'); // Finds the closest form ancestor of the current input
+          const inputs = form.querySelectorAll('input'); // Selects all input elements within the form
+          const currentIndex = Array.from(inputs).indexOf(this); // Finds the index of the current input in the NodeList
+          const nextInput = inputs[currentIndex + 1]; // Gets the next input element in the NodeList
+          // If there's a next input, focus it
+          // If the next input is not found, it will be undefined.
+          // If nextInput is not undefined, it will focus the next input.
+          // If nextInput is undefined, it will focus the submit button.
+
+          if (nextInput) {
+            nextInput.focus(); // Focuses the next input element
+          } else {
+            // If there's no next input, focus the submit button
+            form.querySelector('button').focus(); // Finds the first button in the form and focuses it
+          }
+        }
+      });
+    });
+
+    // Run setup when page loads
+    window.onload = function() { // When the page loads, this function is executed.
+      setupTabIndexes(); // Setup tab indexes for proper focus order
+      
+      // Focus first input of login form
+      document.getElementById('username').focus(); 
+      
+      // Try to load saved user data
+      const savedData = sessionStorage.getItem(storedDataKey); // Retrieves the user data from session storage using the defined key.
+      if (savedData) {
+        const userData = JSON.parse(savedData); // Parses the JSON string back into an object.
+        //  JSON means JavaScript Object Notation which is a lightweight data interchange format.
+        // it converts the string into a JavaScript object.
+        // If user data exists, pre-fill the username field
+        // Checks if userData exists and has an email property.
+        // If it does, it sets the value of the username input field to the email address.
+      
+        if (userData && userData.email) { // Checks if userData exists and has an email property.
+          document.getElementById('username').value = userData.email; // Sets the value of the username input field to the email address.
+        }
+      }
+    };
+
+    // Toggles between login and signup forms
+    function toggleForm() {
+      const loginForm = document.getElementById('login-form');
+      const signupForm = document.getElementById('signup-form');
+      const title = document.getElementById('form-title');
+
+      loginForm.classList.toggle('hidden');
+      signupForm.classList.toggle('hidden');
+
+      title.textContent = loginForm.classList.contains('hidden') // Checks if the login form is hidden
+        ? 'SIGN UP TO CONTINUE'
+        : 'LOGIN TO CONTINUE';
+        
+      // Clear error messages
+      document.getElementById('error-message').textContent = ''; // Clear error message for login form
+      document.getElementById('signup-error').textContent = ''; // Clear error message for signup form
+      
+      // Setup tab indexes for proper focus order
+      setupTabIndexes();
+      
+      // Focus first input of visible form
+      const visibleForm = loginForm.classList.contains('hidden') ? signupForm : loginForm; 
+      // Checks which form is visible (not hidden) and assigns it to visibleForm.
+      // If loginForm is hidden, it assigns signupForm to visibleForm.
+      const firstInput = visibleForm.querySelector('input'); 
+      // Selects the first input element in the visible form.
+      if (firstInput) {
+        firstInput.focus(); // Focuses the first input element in the visible form.
+      }
+    }
+
+    // Validate email format
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+      return emailRegex.test(email); // .test() method tests for a match in a string.
+      // It returns true if the string matches the regex pattern, otherwise false.
+      // The regex pattern checks for a valid email format.
+      // It ensures that the email contains characters before and after the @ symbol,
+      // and a domain name with at least one dot.
+    // The regex pattern checks for a valid email format.
+    // .test() is defined in the regex pattern.
+    }
+
+    // Validate username format
+    function isValidUsername(username) {
+      const usernameRegex = /^[a-zA-Z0-9]{4,20}$/;
+      // The regex pattern checks for 4-20 alphanumeric characters (letters and numbers).
+      return usernameRegex.test(username);
+    }
+
+    // Validate password strength
+    function isValidPassword(password) {
+      // At least 8 characters, one uppercase letter, and one number
+      const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+      return passwordRegex.test(password);
+    }
+
+    // Sign up function with session storage and validation
+    function signup() {
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const username = document.getElementById('signup-username').value;
+      const password = document.getElementById('signup-password').value;
+      const errorElement = document.getElementById('signup-error');
+
+      // Validate all fields
+      if (!name || !email || !username || !password) {
+        errorElement.textContent = 'Please fill in all fields';
+        return;
+      }
+
+      // Validate email format
+      if (!isValidEmail(email)) {
+        errorElement.textContent = 'Please enter a valid email address';
+        document.getElementById('email').focus(); // Focus on the email input
+        return;
+      }
+
+      // Validate username format
+      if (!isValidUsername(username)) {
+        errorElement.textContent = 'Username must be 4-20 alphanumeric characters';
+        document.getElementById('signup-username').focus(); // Focus on the username input
+        return;
+      }
+
+      // Validate password strength
+      if (!isValidPassword(password)) {
+        errorElement.textContent = 'Password must be at least 8 characters with 1 uppercase letter and 1 number';
+        document.getElementById('signup-password').focus(); // Focus on the password input
+        return;
+      }
+
+      // Store user data in session storage instead of local storage, because we want to avoid unwanted autofill
+      // The session storage is cleared when the page session ends.
+      // The session storage is specific to the current tab or window.
+      // The local storage persists even after the browser is closed.
+      // The local storage is shared across all tabs and windows of the same origin.
+      // The session storage is more secure for sensitive data like passwords.
+
+      const userData = { name, email, username, password };  // Create an object with user data
+      // Store user data in session storage
+      // The session storage is cleared when the page session ends.
+      // The session storage is specific to the current tab or window.
+      sessionStorage.setItem(storedDataKey, JSON.stringify(userData)); 
+      // Converts the user data object to a JSON string and stores it in session storage.
+      
+      // Also store in localStorage for persistence between sessions if needed
+      localStorage.setItem('user', JSON.stringify(userData));
+      // Converts the user data object to a JSON string and stores it in local storage.
+      
+      redirect(); // Redirect to the dashboard page
+    }
+
+    // Login function with session storage
+    function login() {
+      const usernameOrEmail = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const errorMessage = document.getElementById('error-message');
+
+      // Try session storage first (current session data)
+      let storedUser = JSON.parse(sessionStorage.getItem(storedDataKey));
+      //  JSON.parse() converts a JSON string into a JavaScript object.
+      // sessionStorage.getItem() retrieves the user data from session storage using the defined key.
+      // If user data is not found in session storage, check local storage
+      // The local storage persists even after the browser is closed.
+      // The local storage is shared across all tabs and windows of the same origin.
+      // The session storage is more secure for sensitive data like passwords.
+      // The session storage is cleared when the page session ends.
+      // The session storage is specific to the current tab or window.
+
+      // If not found in session storage, try local storage (persistent data)
+      if (!storedUser) {
+        storedUser = JSON.parse(localStorage.getItem('user'));
+        // Retrieves the user data from local storage using the defined key.
+      }
+
+      if (!usernameOrEmail || !password) {
+        errorMessage.textContent = 'Please enter both username and password';
+        document.getElementById('username').focus();
+        return;
+      }
+
+      if (storedUser && 
+          (storedUser.email === usernameOrEmail || storedUser.username === usernameOrEmail) && 
+          storedUser.password === password) {
+        errorMessage.textContent = '';
+        // If login is successful, save user data to session storage
+        
+        // Save to session storage for current session
+        sessionStorage.setItem(storedDataKey, JSON.stringify(storedUser));
+        
+        redirect(); // Redirect to the dashboard page
+      } else { // If login fails, show error message
+        errorMessage.textContent = 'Account not found. Please check your credentials.';
+        document.getElementById('username').focus();
+      }
+    }
+
+    // Redirect to the dashboard page
+    function redirect() {
+      window.location.href = "dashboard.html";
+    }
+  </script>
+</body>
+</html>
